@@ -14,6 +14,7 @@
 #include  "usbd_hid_core.h"
 #include  "usbd_usr.h"
 #include  "usbd_desc.h"
+#include "flash_if.h"
 //反馈切换
 // 输入0 1 2 3  U16_4094
 // 0  1000V
@@ -186,6 +187,52 @@ void PowerOffHandle(void)
 	
 }
 
+void JumpBoot(u8 flag)
+{
+  	void (*pUserApp)(void);
+  uint32_t JumpAddress;
+	if(flag==55)
+  {		
+	__asm("CPSID  I");
+        
+		JumpAddress = *(volatile uint32_t*) (USER_FLASH_FIRST_PAGE_ADDRESS+4);
+		pUserApp = (void (*)(void)) JumpAddress;
+		TIM_Cmd(BASIC_TIM, DISABLE);	
+		TIM_DeInit(TIM2);
+		TIM_Cmd(TIM2,DISABLE);
+		TIM_DeInit(BASIC_TIM);
+		TIM_ITConfig(BASIC_TIM,TIM_IT_Update,DISABLE);
+		TIM_Cmd(BASIC_TIM, DISABLE);	
+		USART_DeInit(DEBUG_USART);
+		USART_ITConfig(DEBUG_USART, USART_IT_RXNE, DISABLE);		
+		USART_Cmd(DEBUG_USART,DISABLE);
+		RCC_DeInit();
+		RCC_RTCCLKCmd(DISABLE);
+		EXTI_DeInit();
+		SysTick->CTRL = 0;
+		RTC_DeInit();
+		RTC_ITConfig(RTC_IT_WUT,DISABLE);//关闭WAKE UP 定时器中断
+		RTC_WakeUpCmd( DISABLE);//关闭WAKE UP 定时器　
+//		Disable_Extiint();
+//		USBH_DeInit(&USB_OTG_Core,&USB_Host);
+		__disable_irq();
+		NVIC_DisableIRQ(OTG_FS_IRQn);
+		NVIC_DisableIRQ(OTG_FS_WKUP_IRQn);
+		NVIC_DisableIRQ(OTG_HS_IRQn);
+		NVIC_DisableIRQ(OTG_HS_WKUP_IRQn);
+		__ASM volatile ("cpsid i");
+		/* Initialize user application's Stack Pointer */
+		__set_PSP(*(volatile uint32_t*) USER_FLASH_FIRST_PAGE_ADDRESS);
+		__set_CONTROL(0);
+		__set_MSP(*(volatile uint32_t*) USER_FLASH_FIRST_PAGE_ADDRESS);
+		
+        
+		
+//		NVIC_SystemReset();
+		pUserApp();
+	}
+}
+
 //U盘检测
 u8 udisk_scan(void)
 {
@@ -255,7 +302,7 @@ void Power_Process(void)
     SysTick_Init();
 	  set_mid(); 
     delay_ms(10);
-    Init_CH376();
+    
 //    Keyboard_Init();//按键初始化
     TIM6_Configuration();
 	  
@@ -1032,6 +1079,9 @@ void Setup_Process(void)
 				case Key_F5:
 					switch(keynum)
 					{
+						case 0:
+							JumpBoot(55);
+						break;
 						case 4:
 						case 9:
 							break;
@@ -1184,6 +1234,7 @@ void Test_Process(void)
     V_Range = 0;
 	  F_100ms = FALSE;//100ms定时	
     debug_flag = 0;
+	Init_CH376();
     LCD_Clear( LCD_COLOR_TEST_BACK );
     pt=Send_To_U;
     Disp_Test_Item();  
@@ -1726,50 +1777,50 @@ void Test_Process(void)
 //			while(i--)
             udisk_scan();
 
-//			if(usbstatus == CONNECTED)
-//			{
-//				vu8 copybuff[100];
-//                memset((void *)copybuff,0,100);
+			if(usbstatus == CONNECTED)
+			{
+				vu8 copybuff[100];
+                memset((void *)copybuff,0,100);
 
-//				if(fileflag == 0)
-//				{
-//					memcpy ((void *)copybuff,"/",1);
-//					strcat((char *)copybuff,(char *)Jk516save.Sys_Setvalue.textname);
-//					strcat((char *)copybuff,(char *)".XLS");
-//					result=CH376FileOpenPath(copybuff);
-//					if(result == ERR_MISS_FILE)
-//					{
-//						result = CH376FileCreatePath(copybuff);
-//						if(result == USB_INT_SUCCESS)
-//						{
-//							CH376ByteWrite( "序号\t电阻\t电压\t分选\r\n", strlen("序号\t电阻\t电压\t分选\r\n"), NULL );
-//							if(result == USB_INT_SUCCESS)
-//							{
-//								result = CH376FileClose(TRUE);
-//							}
-//						}
-//					}
-//					fileflag = 1;
-//				}else{
-//					memcpy ((void *)copybuff,"/",1);
-//					strcat((char *)copybuff,(char *)Jk516save.Sys_Setvalue.textname);
-//					strcat((char *)copybuff,(char *)".XLS");
-//					result=CH376FileOpenPath(copybuff);
-//					result = CH376ByteLocate(0xFFFFFFFF);
-//					if(result == USB_INT_SUCCESS)
-//					{
-//						pt=Send_To_U;
-//						CH376ByteWrite((u8 *)&pt, sizeof(Send_To_U), NULL );
-//						if(result == USB_INT_SUCCESS)
-//						{
-//							result = CH376FileClose(TRUE);
-//						}
-//					}
-//				}
-//            }else{
-//				fileflag = 0;
-//				Disp_usbflag=0;
-//			}
+				if(fileflag == 0)
+				{
+					memcpy ((void *)copybuff,"/",1);
+					strcat((char *)copybuff,(char *)Jk516save.Sys_Setvalue.textname);
+					strcat((char *)copybuff,(char *)".XLS");
+					result=CH376FileOpenPath(copybuff);
+					if(result == ERR_MISS_FILE)
+					{
+						result = CH376FileCreatePath(copybuff);
+						if(result == USB_INT_SUCCESS)
+						{
+							CH376ByteWrite( "序号\t电阻\t电压\t分选\r\n", strlen("序号\t电阻\t电压\t分选\r\n"), NULL );
+							if(result == USB_INT_SUCCESS)
+							{
+								result = CH376FileClose(TRUE);
+							}
+						}
+					}
+					fileflag = 1;
+				}else{
+					memcpy ((void *)copybuff,"/",1);
+					strcat((char *)copybuff,(char *)Jk516save.Sys_Setvalue.textname);
+					strcat((char *)copybuff,(char *)".XLS");
+					result=CH376FileOpenPath(copybuff);
+					result = CH376ByteLocate(0xFFFFFFFF);
+					if(result == USB_INT_SUCCESS)
+					{
+						pt=Send_To_U;
+						CH376ByteWrite((u8 *)&pt, sizeof(Send_To_U), NULL );
+						if(result == USB_INT_SUCCESS)
+						{
+							result = CH376FileClose(TRUE);
+						}
+					}
+				}
+            }else{
+				fileflag = 0;
+				Disp_usbflag=0;
+			}
         }
              
 		Uart_Process();//串口处理
@@ -1842,7 +1893,7 @@ void Test_Process(void)
                             case 2:
                                 
                                 Coordinates.xpos = DISPX1;
-                                Coordinates.ypos = FIRSTLINE+HIGH1+10+2;
+                                Coordinates.ypos = FIRSTLINE+HIGH1+10+5;
                                 Coordinates.lenth = RECT;
 							
                                 Jk516save.Set_Data.High_Res = Disp_Set_Num(&Coordinates);
@@ -1850,7 +1901,7 @@ void Test_Process(void)
                             break;
                             case 3:
                                 Coordinates.xpos=DISPX1;
-                                Coordinates.ypos=FIRSTLINE+HIGH1*2+20+2;
+                                Coordinates.ypos=FIRSTLINE+HIGH1*2+20+5;
                                 Coordinates.lenth=RECT;
                                 Jk516save.Set_Data.Res_low = Disp_Set_Num(&Coordinates);
                                 
@@ -1861,18 +1912,18 @@ void Test_Process(void)
    
                                 break;
                             case 5:
-                                Coordinates.xpos = DISPX2;
-                                Coordinates.ypos = FIRSTLINE+HIGH1*1+10+2;
-                                Coordinates.lenth = RECT-8;
+                                Coordinates.xpos = DISPX2-16;
+                                Coordinates.ypos = FIRSTLINE+HIGH1*1+10+5;
+                                Coordinates.lenth = RECT+8;
                                 Jk516save.Set_Data.V_high=Disp_Set_CompNum(&Coordinates);
                                 
                             break;
                             
                             
                             case 6:
-                                Coordinates.xpos = DISPX2;
-                                Coordinates.ypos = FIRSTLINE+HIGH1*2+20+2;
-                                Coordinates.lenth = RECT-8;
+                                Coordinates.xpos = DISPX2-16;
+                                Coordinates.ypos = FIRSTLINE+HIGH1*2+20+5;
+                                Coordinates.lenth = RECT+8;
                                 Jk516save.Set_Data.V_low=Disp_Set_CompNum(&Coordinates);
                                 
                             break;
@@ -2550,7 +2601,7 @@ void Use_DebugProcess(void)
                 {
                     if(list<5)
                     {
-                        Jk516save.Debug_Value[list-1].standard=Debug_Set_Res(&Coordinates);//电阻
+                        Jk516save.Debug_Value[list-1].standard=Debug_Set_Res(&Coordinates)/10;//电阻
                         Jk516save.Debug_Value[list-1].ad_value=(float)Test_Value.res/Jk516save.Debug_Value[list-1].standard;
                     }
                     else

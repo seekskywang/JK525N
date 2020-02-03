@@ -100,12 +100,12 @@ const uint8_t Test_Setitem[][9+1]=
 
 const uint8_t Test_Setitem_E[][9+1]=
 {
-	{"TRIP    :"},
-	{"R_HIGH  :"},
-	{"R_LOW   :"},
-	{"RANGE   :"},
-	{"V_HIGH  :"},
-	{"V_LOW   :"},
+	{"TRIG  :"},
+	{"R_HIGH:"},
+	{"R_LOW :"},
+	{"RANGE :"},
+	{"V_HIGH:"},
+	{"V_LOW :"},
 };
 
 
@@ -131,13 +131,13 @@ const uint8_t All_TopName_E[][21+1]=
 	{"< 档号显示 >  "},
 	{"< 档计数显示 >  "},
 	{"< 列表扫描显示 >"},
-	{"< MEAS SETUP >  "},
+	{"< MEAS SETUP >"},
 	{"< 用户校正 >    "},
 	{"< 极限列表设置 >"},
 	{"< 列表扫描设置 >"},
-	{"< SYS SETUP >   "},
+	{"< SYS SETUP >"},
 	{"[ LCR文件列表 ] "},
-	{"< SYS DISP >    "},
+	{"< SYS DISP >"},
 
 };
 
@@ -162,30 +162,30 @@ const uint8_t	Set_testitem[][9+1]=
 	{"         "},
 	{"电压标称:"},
 	{"电压上限:"} ,
-  {"         "},
+	{"         "},
 };
 const uint8_t	Set_testitem_E[][9+1]=
 {
-	{"TRIP    :"},
-	{"SPEED   :"},
-	{"         "},
-	{"R_COMP  :"},
-	{"R_LOW   :"},
-	{"         "},
-	{"V_COMP  :"},
-	{"V_LOW   :"},
+	{"TRIG  :"},
+	{"SPEED :"},
 	{"        "},
+	{"R_COMP:"},
+	{"R_LOW :"},
+	{"        "},
+	{"V_COMP:"},
+	{"V_LOW :"},
+	{"      "},
 	
-	{"RANGE   :"},
-	{"BEEP    :"},
-	{"         "},
-	{"R_NORM  :"},
-	{"R_HIGH  :"},
+	{"RANGE :"},
+	{"BEEP  :"},
+	{"       "},
+	{"R_NORM:"},
+	{"R_HIGH:"},
 	
-	{"         "},
-	{"V_NORM  :"},
-	{"V_HIGH  :"} ,
-  {"         "},
+	{"       "},
+	{"V_NORM:"},
+	{"V_HIGH:"} ,
+	{"       "},
 };
 const uint8_t Test_Tirpvalue[][6+1]=
 {
@@ -223,8 +223,8 @@ const uint8_t Test_Compvalue[][6+1]=
 };
 const uint8_t Test_Compvalue_E[][6+1]=
 {
-	{"OPEN"},
-	{"CLOSE"}
+	{"CLOSE"},
+	{"OPEN"}
 
 };
 
@@ -237,8 +237,8 @@ const uint8_t Setup_Beep[][6+1]=
 };
 const uint8_t Setup_Beep_E[][6+1]=
 {
-	"CLOSE ",
-	"PASS  ",
+	"CLOSE",
+	"PASS ",
 	"FAIL ",
 
 };
@@ -329,7 +329,7 @@ const uint8_t Sys_Buard_Value[][6+1]=
 const uint8_t Sys_Language_Value[][7+1]=
 {
 	{"中文"},
-	{"ENGLISH"}
+	{"ENG"}
 
 };
 const uint8_t BiasButton_Tip[][7+1]=  //频率选择时候的下面的提示符号
@@ -1849,19 +1849,22 @@ void Disp_Button_value1( uint32_t value )
 			
 				if( Jk516save.Sys_Setvalue.lanage )
 				{
-						WriteString_16(32, BUTTON_1+5, "MEAS",  0);
-						WriteString_16(32, BUTTON_2, "DISP",  0);
-						WriteString_16(32 + BUTTON_W, BUTTON_1+5, "MEAS",  0);
-						WriteString_16(32 + BUTTON_W, BUTTON_2, "SETUP",  0);
-						WriteString_16(32 + BUTTON_W*2, BUTTON_1+5, " SYS",  0);
-						WriteString_16(32 + BUTTON_W*2, BUTTON_2, "SETUP",  0);
-						WriteString_16(32 + BUTTON_W*3, BUTTON_1+5, "SYS",  0);
-						WriteString_16(32 + BUTTON_W*3, BUTTON_2, "INFO",  0);
+						WriteString_16(25, BUTTON_1+5, "MEAS",  0);
+						WriteString_16(25, BUTTON_2, "DISP",  0);
+						WriteString_16(25 + BUTTON_W, BUTTON_1+5, "MEAS",  0);
+						WriteString_16(25 + BUTTON_W, BUTTON_2, "SETUP",  0);
+						WriteString_16(25 + BUTTON_W*2, BUTTON_1+5, " SYS",  0);
+						WriteString_16(25 + BUTTON_W*2, BUTTON_2, "SETUP",  0);
+						WriteString_16(25 + BUTTON_W*3, BUTTON_1+5, "SYS",  0);
+						WriteString_16(25 + BUTTON_W*3, BUTTON_2, "INFO",  0);
 						
 						if( GetSystemStatus() == SYS_STATUS_TEST )
 						{
-								WriteString_16(32 + BUTTON_W*4, BUTTON_1+5, "CLEAR",  0);
-								WriteString_16(32 + BUTTON_W*4, BUTTON_2, "VALUE",  0);
+								WriteString_16(25 + BUTTON_W*4, BUTTON_1+5, "CLEAR",  0);
+								WriteString_16(25 + BUTTON_W*4, BUTTON_2, "VALUE",  0);
+						}else if(GetSystemStatus() == SYS_STATUS_SETUP){
+								WriteString_16(25 + BUTTON_W*4, BUTTON_1+5, " SYS",  0);
+								WriteString_16(10 + BUTTON_W*4, BUTTON_2, "UPDATE",  0);
 						}
 				}
 				else
@@ -1879,6 +1882,9 @@ void Disp_Button_value1( uint32_t value )
 						{
 								WriteString_16(24 + BUTTON_W*4, BUTTON_1+5, "短 路",  0);
 								WriteString_16(24 + BUTTON_W*4, BUTTON_2, "清 零",  0);
+						}else if(GetSystemStatus() == SYS_STATUS_SETUP){
+								WriteString_16(25 + BUTTON_W*4, BUTTON_1+5, "固 件",  0);
+								WriteString_16(25 + BUTTON_W*4, BUTTON_2, "升 级",  0);
 						}
 			  }
 		}
@@ -2016,9 +2022,9 @@ void Disp_Test_value(u8 num)
 		{
 			 Colour.black = LCD_COLOR_TEST_BACK;
 		}
-		LCD_DrawFullRect( DISPX1, FIRSTLINE+10, RECT , HIGH1-5 ) ;
+		LCD_DrawFullRect( DISPX1, FIRSTLINE+12, RECT , HIGH1-5 ) ;
 		Colour.Fword = LCD_COLOR_YELLOW;
-		LCD_DispString_MS24x23( DISPX1, FIRSTLINE+10, pt[Jk516save.Set_Data.trip]);
+		LCD_DispString_MS24x23( DISPX1, FIRSTLINE+12, pt[Jk516save.Set_Data.trip]);
 	
     //电阻上限
 		Black_Select = ( num == 2 ) ? 1 : 0;
@@ -2031,9 +2037,9 @@ void Disp_Test_value(u8 num)
 		{
 			Colour.black = LCD_COLOR_TEST_BACK;
 		}
-		Hex_Format( Jk516save.Set_Data.High_Res.Num, Jk516save.Set_Data.High_Res.Dot, 5 , 0);
-		LCD_DrawFullRect( DISPX1, FIRSTLINE+HIGH1+12, RECT, HIGH1  ) ;
-		LCD_DispString_EN_CH( DISPX1, FIRSTLINE+HIGH1+12, DispBuf);   
+		Hex_Format( Jk516save.Set_Data.High_Res.Num, Jk516save.Set_Data.High_Res.Dot, 6 , 0);
+		LCD_DrawFullRect( DISPX1, FIRSTLINE+HIGH1+15, RECT, HIGH1  ) ;
+		LCD_DispString_EN_CH( DISPX1, FIRSTLINE+HIGH1+15, DispBuf);   
 		LCD_DispString_MS24x23( DISPX1+7*16, FIRSTLINE+HIGH1+18, DISP_UINT[Jk516save.Set_Data.High_Res.Unit]);
 	
 		//电阻下限
@@ -2046,7 +2052,7 @@ void Disp_Test_value(u8 num)
 		{ 
 			  Colour.black = LCD_COLOR_TEST_BACK;
 		}
-		Hex_Format( Jk516save.Set_Data.Res_low.Num , Jk516save.Set_Data.Res_low.Dot, 5 , 0);
+		Hex_Format( Jk516save.Set_Data.Res_low.Num , Jk516save.Set_Data.Res_low.Dot, 6 , 0);
 		LCD_DrawFullRect( DISPX1, FIRSTLINE+HIGH1*2+22, RECT, HIGH1 ) ;
 		LCD_DispString_EN_CH( DISPX1, FIRSTLINE+HIGH1*2+22, DispBuf);
 		LCD_DispString_MS24x23( DISPX1+7*16, FIRSTLINE+HIGH1*2+28,DISP_UINT[Jk516save.Set_Data.Res_low.Unit]);
@@ -2071,12 +2077,12 @@ void Disp_Test_value(u8 num)
         ppt = User_Range;
     
     }	
-		LCD_DrawFullRect( DISPX2, FIRSTLINE+10, SELECT_2END-LIST2-150, HIGH1-5) ;//SPACE1
+		LCD_DrawFullRect( DISPX2, FIRSTLINE+12, SELECT_2END-LIST2-150, HIGH1-5) ;//SPACE1
     if( Jk516save.Set_Data.Range_Set == 0 )
         
-        LCD_DispString_MS24x23( DISPX2, FIRSTLINE+10, ppt[0]);
+        LCD_DispString_MS24x23( DISPX2, FIRSTLINE+12, ppt[0]);
     else
-        LCD_DispString_MS24x23( DISPX2, FIRSTLINE+10, ppt[Jk516save.Set_Data.Range+1]);
+        LCD_DispString_MS24x23( DISPX2, FIRSTLINE+12, ppt[Jk516save.Set_Data.Range+1]);
 	
 	  //电压上限
 		Black_Select = ( num == 5 ) ? 1 : 0;
@@ -2091,8 +2097,8 @@ void Disp_Test_value(u8 num)
 		}
 
 		Hex_Format( Jk516save.Set_Data.V_high.Num , Jk516save.Set_Data.V_high.Dot, 6, 0);
-		LCD_DrawFullRect( DISPX2, FIRSTLINE+HIGH1+12 ,SELECT_2END-LIST2-144, HIGH1) ;//SPACE1
-		LCD_DispString_EN_CH( DISPX2, FIRSTLINE+HIGH1+12, DispBuf);
+		LCD_DrawFullRect( DISPX2-16, FIRSTLINE+HIGH1+15 ,SELECT_2END-LIST2-128, HIGH1) ;//SPACE1
+		LCD_DispString_EN_CH( DISPX2-16, FIRSTLINE+HIGH1+15, DispBuf);
 		LCD_DispString_MS24x23( DISPX2+16*8, FIRSTLINE+HIGH1+18, "V");
 	
 		//电压下限
@@ -2108,8 +2114,8 @@ void Disp_Test_value(u8 num)
 		}
 
 		Hex_Format( Jk516save.Set_Data.V_low.Num, Jk516save.Set_Data.V_low.Dot, 6 , 0);
-		LCD_DrawFullRect( DISPX2, FIRSTLINE+HIGH1*2+22, SELECT_2END-LIST2-144, HIGH1) ;//SPACE1
-		LCD_DispString_EN_CH( DISPX2, FIRSTLINE+HIGH1*2+22, DispBuf);
+		LCD_DrawFullRect( DISPX2-16, FIRSTLINE+HIGH1*2+22, SELECT_2END-LIST2-128, HIGH1) ;//SPACE1
+		LCD_DispString_EN_CH( DISPX2-16, FIRSTLINE+HIGH1*2+22, DispBuf);
 		LCD_DispString_MS24x23( DISPX2+16*8, FIRSTLINE+HIGH1*2+28, "V");
 		
 		Disp_Fastbutton();
@@ -2337,7 +2343,7 @@ void DispSet_value(u8 keynum)
 			}
 			
 			LCD_DrawFullRect( DISPX1, FIRSTLINE+HIGH1*3,RECT , HIGH1  ) ;
-		WriteString_16(DISPX1+16, FIRSTLINE+HIGH1*3, pt[Jk516save.Set_Data.Res_comp],  0);
+		WriteString_16(DISPX1, FIRSTLINE+HIGH1*3, pt[Jk516save.Set_Data.Res_comp],  0);
 		
 		
 	   //电阻下限	
@@ -2397,8 +2403,8 @@ void DispSet_value(u8 keynum)
 	}
 	
 	Hex_Format(Jk516save.Set_Data.V_low.Num , Jk516save.Set_Data.V_low.Dot , 6 , 0);
-	LCD_DrawFullRect( DISPX1, FIRSTLINE+HIGH1*7-6,RECT , HIGH1  ) ;
-	LCD_DispString_EN_CH(DISPX1, FIRSTLINE+HIGH1*7-6, DispBuf);
+	LCD_DrawFullRect( DISPX1-16, FIRSTLINE+HIGH1*7-6,RECT , HIGH1  ) ;
+	LCD_DispString_EN_CH(DISPX1-16, FIRSTLINE+HIGH1*7-6, DispBuf);
 	WriteString_16(DISPX1+16*8, FIRSTLINE+HIGH1*7+8-6, "V",  0);
 	
 
@@ -2506,8 +2512,8 @@ void DispSet_value(u8 keynum)
 	}
 	
 	Hex_Format(Jk516save.Set_Data.Nominal_V.Num, Jk516save.Set_Data.Nominal_V.Dot ,6 , 0);
-	LCD_DrawFullRect( DISPX2, FIRSTLINE+HIGH1*6-6, RECT , HIGH1) ;
-	LCD_DispString_EN_CH(DISPX2, FIRSTLINE+HIGH1*6-6, DispBuf);
+	LCD_DrawFullRect( DISPX2-16, FIRSTLINE+HIGH1*6-6, RECT , HIGH1) ;
+	LCD_DispString_EN_CH(DISPX2-16, FIRSTLINE+HIGH1*6-6, DispBuf);
 	
 	WriteString_16(DISPX2+16*8, FIRSTLINE+HIGH1*6+8-6, "V",  0);
 	
@@ -2527,8 +2533,8 @@ void DispSet_value(u8 keynum)
 	
 	
 	Hex_Format(Jk516save.Set_Data.V_high.Num, Jk516save.Set_Data.V_high.Dot , 6 , 0);
-	LCD_DrawFullRect( DISPX2, FIRSTLINE+HIGH1*7-6,RECT , HIGH1) ;
-	LCD_DispString_EN_CH(DISPX2, FIRSTLINE+HIGH1*7-6, DispBuf);
+	LCD_DrawFullRect( DISPX2-16, FIRSTLINE+HIGH1*7-6,RECT , HIGH1) ;
+	LCD_DispString_EN_CH(DISPX2-16, FIRSTLINE+HIGH1*7-6, DispBuf);
 	
 	WriteString_16(DISPX2+16*8, FIRSTLINE+HIGH1*7+8-6, "V",  0);
 	
@@ -2843,8 +2849,8 @@ void Disp_Sys_value(u8 keynum)
 		else
 				pt = Test_Compvalue;
 
-		LCD_DrawFullRect( DISPX1, FIRSTLINE, RECT, HIGH1 );
-		LCD_DispString_MS24x23( DISPX1, FIRSTLINE, pt[Jk516save.Sys_Setvalue.uart]);
+		LCD_DrawFullRect( DISPX1+10, FIRSTLINE, RECT, HIGH1 );
+		LCD_DispString_MS24x23( DISPX1+10, FIRSTLINE, pt[Jk516save.Sys_Setvalue.uart]);
 		
 	  //波特率
 		Black_Select = (keynum == 2) ? 1 : 0;
@@ -2852,8 +2858,8 @@ void Disp_Sys_value(u8 keynum)
 				Colour.black = LCD_COLOR_SELECT;
 		else
 				Colour.black = LCD_COLOR_TEST_BACK;
-		LCD_DrawFullRect( DISPX1, FIRSTLINE+HIGH1, RECT, HIGH1) ;
-		LCD_DispString_EN_CH(DISPX1, FIRSTLINE+HIGH1, Sys_Buard_Value[Jk516save.Sys_Setvalue.buard]);
+		LCD_DrawFullRect( DISPX1+10, FIRSTLINE+HIGH1, RECT, HIGH1) ;
+		LCD_DispString_EN_CH(DISPX1+10, FIRSTLINE+HIGH1, Sys_Buard_Value[Jk516save.Sys_Setvalue.buard]);
 		
 		//U盘开关
 		Black_Select = ( keynum == 3 ) ? 1 : 0;
@@ -2865,8 +2871,8 @@ void Disp_Sys_value(u8 keynum)
 				pt=Test_Compvalue_E;
 		else
 				pt=Test_Compvalue;
-		LCD_DrawFullRect( DISPX1, FIRSTLINE+( HIGH1+8 )*2, RECT, HIGH1) ;
-		WriteString_16( DISPX1, FIRSTLINE+( HIGH1+8 )*2, pt[Jk516save.Sys_Setvalue.u_flag],  0);
+		LCD_DrawFullRect( DISPX1+10, FIRSTLINE+( HIGH1+8 )*2, RECT, HIGH1) ;
+		WriteString_16( DISPX1+10, FIRSTLINE+( HIGH1+8 )*2, pt[Jk516save.Sys_Setvalue.u_flag],  0);
 		
 		//IO接口开关
 		Black_Select = ( keynum == 4 ) ? 1 : 0;
@@ -2878,8 +2884,8 @@ void Disp_Sys_value(u8 keynum)
 				pt=Test_Compvalue_E;
 		else
 				pt=Test_Compvalue;	
-		LCD_DrawFullRect( DISPX1, FIRSTLINE+( HIGH1+8 )*3, RECT, HIGH1) ;
-		WriteString_16( DISPX1, FIRSTLINE+( HIGH1+8 )*3, pt[Jk516save.Sys_Setvalue.plc],  0);
+		LCD_DrawFullRect( DISPX1+10, FIRSTLINE+( HIGH1+8 )*3, RECT, HIGH1) ;
+		WriteString_16( DISPX1+10, FIRSTLINE+( HIGH1+8 )*3, pt[Jk516save.Sys_Setvalue.plc],  0);
 		
 	  //显示语言
 		Black_Select = ( keynum == 5 ) ? 1 : 0;
@@ -2887,8 +2893,8 @@ void Disp_Sys_value(u8 keynum)
 				Colour.black = LCD_COLOR_SELECT;
 		else
 				Colour.black = LCD_COLOR_TEST_BACK;	
-		LCD_DrawFullRect( DISPX1, FIRSTLINE+( HIGH1+8 )*4, RECT, HIGH1) ;//SPACE1
-		WriteString_16( DISPX1, FIRSTLINE+( HIGH1+8 )*4, Sys_Language_Value[Jk516save.Sys_Setvalue.lanage],  0);
+		LCD_DrawFullRect( DISPX1+10, FIRSTLINE+( HIGH1+8 )*4, RECT, HIGH1) ;//SPACE1
+		WriteString_16( DISPX1+10, FIRSTLINE+( HIGH1+8 )*4, Sys_Language_Value[Jk516save.Sys_Setvalue.lanage],  0);
 		RTC_GetTime( RTC_Format_BIN, &RTC_TimeStructure);
 		RTC_GetDate( RTC_Format_BIN, &RTC_DateStructure);
 	
@@ -2903,12 +2909,12 @@ void Disp_Sys_value(u8 keynum)
 		{
 			Colour.black = LCD_COLOR_TEST_BACK;
 		}
-		LCD_DrawFullRect( DISPX1, FIRSTLINE+( HIGH1+8 )*5 -5, 32, HIGH1) ;
+		LCD_DrawFullRect( DISPX1+10, FIRSTLINE+( HIGH1+8 )*5 -5, 32, HIGH1) ;
 
 		sprintf((char *)DispBuf,"%02d",RTC_DateStructure.RTC_Year);
-		LCD_DispString_EN_CH( DISPX1, FIRSTLINE+( HIGH1+8 )*5-5, DispBuf);
+		LCD_DispString_EN_CH( DISPX1+10, FIRSTLINE+( HIGH1+8 )*5-5, DispBuf);
 		Colour.black = LCD_COLOR_TEST_BACK;
-		LCD_DispString_EN_CH( DISPX1+32, FIRSTLINE+( HIGH1+8 )*5-5, "-");
+		LCD_DispString_EN_CH( DISPX1+32+10, FIRSTLINE+( HIGH1+8 )*5-5, "-");
 		
 		//月
 		Black_Select = (keynum==7)?1:0;
@@ -2921,12 +2927,12 @@ void Disp_Sys_value(u8 keynum)
 		{
 			Colour.black = LCD_COLOR_TEST_BACK;
 		}
-		LCD_DrawFullRect( DISPX1+48, FIRSTLINE+( HIGH1+8 )*5-5,32 , HIGH1 ) ;//SPACE1
+		LCD_DrawFullRect( DISPX1+48+10, FIRSTLINE+( HIGH1+8 )*5-5,32 , HIGH1 ) ;//SPACE1
 
 		sprintf((char *)DispBuf,"%02d",RTC_DateStructure.RTC_Month);
-		LCD_DispString_EN_CH(DISPX1+48, FIRSTLINE+( HIGH1+8 )*5-5, DispBuf);
+		LCD_DispString_EN_CH(DISPX1+48+10, FIRSTLINE+( HIGH1+8 )*5-5, DispBuf);
 		Colour.black=LCD_COLOR_TEST_BACK;
-		LCD_DispString_EN_CH( DISPX1+80, FIRSTLINE+( HIGH1+8 )*5-5, "-");
+		LCD_DispString_EN_CH( DISPX1+80+10, FIRSTLINE+( HIGH1+8 )*5-5, "-");
 		
 		
 		//日
@@ -2941,10 +2947,10 @@ void Disp_Sys_value(u8 keynum)
 			Colour.black=LCD_COLOR_TEST_BACK;
 		}
 		
-		LCD_DrawFullRect( DISPX1+96, FIRSTLINE+( HIGH1+8 )*5-5,32 ,HIGH1 ) ;//SPACE1
+		LCD_DrawFullRect( DISPX1+96+10, FIRSTLINE+( HIGH1+8 )*5-5,32 ,HIGH1 ) ;//SPACE1
 
 		sprintf((char *)DispBuf,"%02d",RTC_DateStructure.RTC_Date);
-		LCD_DispString_EN_CH(DISPX1+96, FIRSTLINE+( HIGH1+8 )*5-5, DispBuf);
+		LCD_DispString_EN_CH(DISPX1+96+10, FIRSTLINE+( HIGH1+8 )*5-5, DispBuf);
 
 		//时
 		Black_Select=(keynum==9)?1:0;
@@ -2957,12 +2963,12 @@ void Disp_Sys_value(u8 keynum)
 		{
 			Colour.black=LCD_COLOR_TEST_BACK;
 		}
-		LCD_DrawFullRect( DISPX1, FIRSTLINE+( HIGH1+8 )*6-5,32 , HIGH1 ) ;//SPACE1
+		LCD_DrawFullRect( DISPX1+10, FIRSTLINE+( HIGH1+8 )*6-5,32 , HIGH1 ) ;//SPACE1
 
 		sprintf((char *)DispBuf,"%02d",RTC_TimeStructure.RTC_Hours);
-		LCD_DispString_EN_CH(DISPX1, FIRSTLINE+( HIGH1+8 )*6-5, DispBuf);
+		LCD_DispString_EN_CH(DISPX1+10, FIRSTLINE+( HIGH1+8 )*6-5, DispBuf);
 		Colour.black=LCD_COLOR_TEST_BACK;
-		LCD_DispString_EN_CH(DISPX1+32, FIRSTLINE+( HIGH1+8 )*6-5, ":");
+		LCD_DispString_EN_CH(DISPX1+32+10, FIRSTLINE+( HIGH1+8 )*6-5, ":");
 	
 		//分
 		Black_Select=(keynum==10)?1:0;
@@ -2975,12 +2981,12 @@ void Disp_Sys_value(u8 keynum)
 		{
 			Colour.black=LCD_COLOR_TEST_BACK;
 		}
-		LCD_DrawFullRect( DISPX1+16*3, FIRSTLINE+( HIGH1+8 )*6-5,32 , HIGH1 ) ;//SPACE1
+		LCD_DrawFullRect( DISPX1+16*3+10, FIRSTLINE+( HIGH1+8 )*6-5,32 , HIGH1 ) ;//SPACE1
 
 		sprintf((char *)DispBuf,"%02d",RTC_TimeStructure.RTC_Minutes);
-		LCD_DispString_EN_CH(DISPX1+48, FIRSTLINE+( HIGH1+8 )*6-5, DispBuf);
+		LCD_DispString_EN_CH(DISPX1+48+10, FIRSTLINE+( HIGH1+8 )*6-5, DispBuf);
 		Colour.black=LCD_COLOR_TEST_BACK;
-		LCD_DispString_EN_CH(DISPX1+80, FIRSTLINE+( HIGH1+8 )*6-5, ":");
+		LCD_DispString_EN_CH(DISPX1+80+10, FIRSTLINE+( HIGH1+8 )*6-5, ":");
 		
 		
 		//秒
@@ -2994,9 +3000,9 @@ void Disp_Sys_value(u8 keynum)
 		{
 			Colour.black=LCD_COLOR_TEST_BACK;
 		}
-		LCD_DrawFullRect( DISPX1+96, FIRSTLINE+( HIGH1+8 )*6-5,32 ,HIGH1 ) ;//SPACE1
+		LCD_DrawFullRect( DISPX1+96+10, FIRSTLINE+( HIGH1+8 )*6-5,32 ,HIGH1 ) ;//SPACE1
 		sprintf((char *)DispBuf,"%02d",RTC_TimeStructure.RTC_Seconds);
-		LCD_DispString_EN_CH(DISPX1+96, FIRSTLINE+( HIGH1+8 )*6-5, DispBuf);
+		LCD_DispString_EN_CH(DISPX1+96+10, FIRSTLINE+( HIGH1+8 )*6-5, DispBuf);
 		
 		//文件名称
 		Black_Select=(keynum==12)?1:0;
@@ -3010,8 +3016,8 @@ void Disp_Sys_value(u8 keynum)
 			Colour.black=LCD_COLOR_TEST_BACK;
 		}
 			
-		LCD_DrawFullRect( DISPX1, FIRSTLINE+( HIGH1+8 )*7,RECT ,HIGH1) ;//SPACE1
-		WriteString_16(DISPX1, FIRSTLINE+( HIGH1+8 )*7,(const uint8_t *) Jk516save.Sys_Setvalue.textname,  0);
+		LCD_DrawFullRect( DISPX1+10, FIRSTLINE+( HIGH1+8 )*7,RECT ,HIGH1) ;//SPACE1
+		WriteString_16(DISPX1+10, FIRSTLINE+( HIGH1+8 )*7,(const uint8_t *) Jk516save.Sys_Setvalue.textname,  0);
 
 			
 		Disp_Fastbutton();
@@ -3034,7 +3040,7 @@ void Disp_Sys_value(u8 keynum)
 							
 							}
 							for(i=0;i<2;i++)
-							WriteString_16(32+i*BUTTON_W, BUTTON_1+16, pt[i],  0);
+							WriteString_16(25+i*BUTTON_W, BUTTON_1+16, pt[i],  0);
 
 
 			break;
@@ -3059,7 +3065,7 @@ void Disp_Sys_value(u8 keynum)
 				for(i=0;i<2;i++)
 				{
 					
-					WriteString_16(32+i*BUTTON_W, BUTTON_1+16, pt[i],  0);
+					WriteString_16(25+i*BUTTON_W, BUTTON_1+16, pt[i],  0);
 				}
 				break;
 			case 4:
@@ -3076,7 +3082,7 @@ void Disp_Sys_value(u8 keynum)
 					for(i=0;i<2;i++)
 					{
 						
-						WriteString_16(32+i*BUTTON_W, BUTTON_1+16, pt[i],  0);
+						WriteString_16(25+i*BUTTON_W, BUTTON_1+16, pt[i],  0);
 					}
 				break;
 			case 5:
@@ -3092,7 +3098,7 @@ void Disp_Sys_value(u8 keynum)
 				for(i=0;i<2;i++)
 				{
 					
-					WriteString_16(16+i*BUTTON_W, BUTTON_1+16, BiasButton_Tip[i],  0);
+					WriteString_16(8+i*BUTTON_W, BUTTON_1+16, BiasButton_Tip[i],  0);
 				}
 				break;
 		  default:
@@ -3117,7 +3123,7 @@ void Disp_Sys(void)
     else
         ppt = All_TopName;
 		WriteString_16( 0, 4, ppt[10],  0);
-		Colour.Fword = 0XFFD700;
+		Colour.Fword = Green;
 		Colour.black=LCD_COLOR_TEST_BACK;
     if(Jk516save.Sys_Setvalue.lanage)
         pt=Sys_Sys_E;
@@ -3129,7 +3135,7 @@ void Disp_Sys(void)
 			WriteString_16( LIST1 , FIRSTLINE+(SPACE1+10)*i, pt[i],  0);
 
 		}
-    LCD_DispString_EN_CH(LIST1+32*5-10, FIRSTLINE+(SPACE1+10)*3-8, (const uint8_t*)Jk516save.fac_num);
+    LCD_DispString_EN_CH(LIST1+32*7-10, FIRSTLINE+(SPACE1+10)*3-8, (const uint8_t*)Jk516save.fac_num);
 
 		Disp_Button_SysSet();
 }
@@ -3252,7 +3258,7 @@ Sort_TypeDef Disp_NumKeyboard_Set(Disp_Coordinates_Typedef *Coordinates,u8 flag 
 				
 				case Key_NUM1:
 					
-					if(key_count<lenth)
+					if(key_count<lenth - flag)
 					{
 						Disp_buff[key_count]='1';
 						key_count++;
@@ -3261,7 +3267,7 @@ Sort_TypeDef Disp_NumKeyboard_Set(Disp_Coordinates_Typedef *Coordinates,u8 flag 
 				break;
 				
 				case Key_NUM2:
-					if(key_count<lenth)
+					if(key_count<lenth - flag)
 					{
 						Disp_buff[key_count]='2';
 						key_count++;
@@ -3269,7 +3275,7 @@ Sort_TypeDef Disp_NumKeyboard_Set(Disp_Coordinates_Typedef *Coordinates,u8 flag 
 				break;
 					
 				case Key_NUM3:
-					if(key_count<lenth)
+					if(key_count<lenth - flag)
 					{
 						Disp_buff[key_count]='3';
 						key_count++;
@@ -3277,7 +3283,7 @@ Sort_TypeDef Disp_NumKeyboard_Set(Disp_Coordinates_Typedef *Coordinates,u8 flag 
 				break;
 					
 				case Key_NUM4:
-					if(key_count<lenth)
+					if(key_count<lenth - flag)
 					{
 						Disp_buff[key_count]='4';
 						key_count++;
@@ -3285,42 +3291,42 @@ Sort_TypeDef Disp_NumKeyboard_Set(Disp_Coordinates_Typedef *Coordinates,u8 flag 
 						
 				break;
 					case Key_NUM5:
-						if(key_count<lenth)
+						if(key_count<lenth - flag)
 						{
 							Disp_buff[key_count]='5';
 							key_count++;
 						}
 					break;
 					case Key_NUM6:
-						if(key_count<lenth)
+						if(key_count<lenth - flag)
 						{
 							Disp_buff[key_count]='6';
 							key_count++;
 						}
 					break;
 					case Key_NUM7:
-						if(key_count<lenth)
+						if(key_count<lenth - flag)
 						{
 							Disp_buff[key_count]='7';
 							key_count++;
 						}
 					break;
 					case Key_NUM8:
-						if(key_count<lenth)
+						if(key_count<lenth - flag)
 						{
 							Disp_buff[key_count]='8';
 							key_count++;
 						}
 					break;
 					case Key_NUM9:
-						if(key_count<lenth)
+						if(key_count<lenth - flag)
 						{
 							Disp_buff[key_count]='9';
 							key_count++;
 						}
 					break;
 					case Key_NUM0:
-						if(key_count<lenth)
+						if(key_count<lenth - flag)
 						{
 							Disp_buff[key_count]='0';
 							key_count++;
@@ -3482,24 +3488,25 @@ Sort_TypeDef Time_Set_Cov(Sort_TypeDef *Time)
 //		Time->Unit=1;
 //	
 //	}else 
-	if(value>=(float)1e6)
+	if(value>=(float)1e7)
 	{
-		Time->Num=value/(float)100;
+		Time->Num=value/(float)1000;
 		Time->Dot=4;
 		Time->Unit=1;
 	
 	
-	}else if(value>=(float)1e5)
-	{
-		Time->Num=value/(float)10;
-//		Time->Num=value;
-		Time->Dot=2;
-		Time->Unit=0;
-	
 	}
+//	else if(value>=(float)1e5)
+//	{
+//		Time->Num=value/(float)10;
+////		Time->Num=value;
+//		Time->Dot=3;
+//		Time->Unit=0;
+//	
+//	}
   else
   {
-		Time->Num=value;
+		Time->Num=value/(float)10;
 		Time->Dot=3;
 		Time->Unit=0;
 	
@@ -3611,7 +3618,7 @@ void Disp_Range(u8 hand,u8 range)
     if(range>6)
         range=6;
     Colour.black = LCD_COLOR_TEST_BACK;
-    LCD_DispString_EN_CH( LCD_WITH-200, 400-32, Range_Disp_Test[hand][range]);
+    LCD_DispString_MS24x23( LCD_WITH-200, 400-32, Range_Disp_Test[hand][range]);
 
 }
 

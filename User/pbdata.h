@@ -263,7 +263,7 @@ u8 GetSoftTimerOut(u8 id);
 
 #define PASSWORD_LENTH  8
 
-#define NUM_LENTH 			(5)//显示长度
+#define NUM_LENTH 			(6)//显示长度
 #define NUM_LENTH_V 			(6)//显示长度
 #define MAX_DOTNUM          (5)//最长的小数点
 

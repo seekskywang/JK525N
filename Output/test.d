@@ -89,3 +89,5 @@
 ..\..\output\test.o: ..\..\USBD_FS_Lib\USBD_inc\usb_defines.h
 ..\..\output\test.o: ..\..\User\usb\usbd_usr.h
 ..\..\output\test.o: ..\..\User\usb\usbd_desc.h
+..\..\output\test.o: ..\..\User\flash_if.h
+..\..\output\test.o: ..\..\User\flash_if.h

@@ -13,7 +13,7 @@
 #define LCD_WITH	640
 #define LCD_HIGH	480
 #define FIRSTLINE	40
-#define	SPACE1		32
+#define	SPACE1		25
 #define LIST1		0
 #define DISPX1	LIST1+144
 #define LIST2		LCD_WITH/2+16

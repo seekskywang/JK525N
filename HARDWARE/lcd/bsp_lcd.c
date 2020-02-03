@@ -1040,7 +1040,7 @@ void WriteString_16(uint16_t x0, uint16_t y0, const uint8_t *pcStr, uint8_t mode
 {
 	
 	LCD_DispString_MS24x23( x0,y0, pcStr);
-	 //LCD_DispString_EN_CH( x0,y0, pcStr );                                                                    
+//	 LCD_DispString_EN_CH( x0,y0, pcStr );                                                                    
 }
 
 void LCD_ShowFontCN_40_55(uint16_t x,uint16_t y,uint16_t xsize,uint16_t ysize,uint8_t * image)
@@ -1203,23 +1203,27 @@ void LCD_DispString_EN_CH( uint16_t Column , uint16_t Line, const uint8_t * pStr
 
 		}else{
 			
-			if ( ( Column + 32 ) >   LCD_PIXEL_WIDTH )
+			if ( ( Column + 24 ) >   LCD_PIXEL_WIDTH )
 			{
 				Column = 0;
-				Line += 32;
+				Line += 24;
 			}
 			
-			if ( ( Line + 32 ) > LCD_PIXEL_HEIGHT)
+			if ( ( Line + 24 ) > LCD_PIXEL_HEIGHT)
 			{
 				Column = 0;
 				Line = 0;
 			}	
 			
-			usCh = findHzIndex_32(pStr);
+//			usCh = findHzIndex_32(pStr);
 
-			LCD_ShowFontCN_32(Column,Line,usCh);
+//			LCD_ShowFontCN_32(Column,Line,usCh);
 			
-			Column += 32;
+			usCh = search_MSFont_Index( pStr );
+			
+		LCD_DisplayFont_MS24x23( Column, Line, usCh ); 
+			
+			Column += 24;
 			
 			pStr += 2;           //一个汉字两个字节 
 		
@@ -1230,6 +1234,58 @@ void LCD_DispString_EN_CH( uint16_t Column , uint16_t Line, const uint8_t * pStr
 
 void LCD_DispString_MS24x23( uint16_t Column , uint16_t Line, const uint8_t * pStr )
 {
+//	uint16_t usCh;
+//	while( * pStr != '\0' )
+//	{
+//		if ( * pStr <= 126 )	           	//英文字符
+//		{
+//			LCD_SetFont(&FontC_16x32);
+//	
+//			/*自动换行*/
+//			if ( ( Column + LCD_Currentfonts->Width ) > LCD_PIXEL_WIDTH )
+//			{
+//				Column = 0;
+//				Line += LCD_Currentfonts->Height;
+//			}
+//			
+//			if ( ( Line + LCD_Currentfonts->Height ) > LCD_PIXEL_HEIGHT )
+//			{
+//				Column = 0;
+//				Line = 0;
+//			}	
+//			LCD_DisplayChar32(Column,Line,*pStr);		
+//			Column += LCD_Currentfonts->Width;
+//		  pStr ++;
+
+//		}else{
+//			
+//			if ( ( Column + 24 ) >   LCD_PIXEL_WIDTH )
+//			{
+//				Column = 0;
+//				Line += 24;
+//			}
+//			
+//			if ( ( Line + 24 ) > LCD_PIXEL_HEIGHT)
+//			{
+//				Column = 0;
+//				Line = 0;
+//			}	
+//			
+////			usCh = findHzIndex_32(pStr);
+
+////			LCD_ShowFontCN_32(Column,Line,usCh);
+//			
+//			usCh = search_MSFont_Index( pStr );
+//			
+//		LCD_DisplayFont_MS24x23( Column, Line, usCh ); 
+//			
+//			Column += 24;
+//			
+//			pStr += 2;           //一个汉字两个字节 
+//		
+//    }
+//		
+// }
 	uint16_t usCh;
 		
 	uint8_t t_char[2];
@@ -1253,7 +1309,7 @@ void LCD_DispString_MS24x23( uint16_t Column , uint16_t Line, const uint8_t * pS
 			
 		if( * pStr <= 126 )
 		{		
-			Column += LCD_Currentfonts->Width;
+			Column += LCD_Currentfonts->Width+2;
 			pStr ++;
 		}
 		else
