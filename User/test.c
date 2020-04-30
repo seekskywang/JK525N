@@ -117,7 +117,7 @@ FIL file;
 u8 usbstatus = UNKNOWN;
 u8 usbbuf[0x40];
 u8 send_usbbuf[0x40];
-
+u8 powerstat;
 #ifdef USB_OTG_HS_INTERNAL_DMA_ENABLED
   #if defined ( __ICCARM__ ) /*!< IAR Compiler */
     #pragma data_alignment=4   
@@ -466,7 +466,11 @@ void Setup_Process(void)
 	 
  	while(GetSystemStatus()==SYS_STATUS_SETUP)
 	{
-	    
+	    powerstat = PowerOffDetect();
+		if(powerstat == 0)
+		{
+			PowerOffHandle();
+		}
 		if(Disp_Flag==1)
 		{
 			
@@ -1211,7 +1215,6 @@ void Setup_Process(void)
 //==========================================================
 void Test_Process(void)
 {
-    static u8 powerstat;
 		vu8 key;
     vu16 USB_Count = 0;
     UINT fnum;
@@ -1348,7 +1351,7 @@ void Test_Process(void)
                         read_adV_one();
 						if(V_ad>0x7fffff)
 								V_ad=0xffffff-V_ad;
-						V_ad/=80;
+						V_ad/=8;
                         Range_Value_V=V_ad;
                         VRange_Changecomp();	//换挡 比较
                         while(range_over)
@@ -1361,7 +1364,7 @@ void Test_Process(void)
 							read_adV_one();
 							if(V_ad>0x7fffff)
 							V_ad=0xffffff-V_ad;
-							V_ad/=80;
+							V_ad/=8;
 							Range_Value_V=V_ad;
 							VRange_Changecomp();	//换挡 比较
                         
@@ -1403,7 +1406,7 @@ void Test_Process(void)
                         read_adV_one();
 						if(V_ad>0x7fffff)
 								V_ad=0xffffff-V_ad;
-						V_ad/=80;
+						V_ad/=8;
                         Range_Value_V=V_ad;
                         VRange_Changecomp();	//换挡 比较
                         while(range_over)
@@ -1416,13 +1419,13 @@ void Test_Process(void)
 							read_adV_one();
 							if(V_ad>0x7fffff)
 							V_ad=0xffffff-V_ad;
-							V_ad/=80;
+							V_ad/=8;
 							Range_Value_V=V_ad;
 							VRange_Changecomp();	//换挡 比较
                         
                         
                         }
-						read_adV_2();
+						read_adV_1();
                     break;
                     case 2://快速
 					Select_V_I(1);
@@ -1458,7 +1461,7 @@ void Test_Process(void)
                         read_adV_one();
 						if(V_ad>0x7fffff)
 								V_ad=0xffffff-V_ad;
-						V_ad/=80;
+						V_ad/=8;
                         Range_Value_V=V_ad;
                         VRange_Changecomp();	//换挡 比较
                         while(range_over)
@@ -1471,13 +1474,13 @@ void Test_Process(void)
 							read_adV_one();
 							if(V_ad>0x7fffff)
 							V_ad=0xffffff-V_ad;
-							V_ad/=80;
+							V_ad/=8;
 							Range_Value_V=V_ad;
 							VRange_Changecomp();	//换挡 比较
                         
                         
                         }
-						read_adV_3();
+						read_adV_1();
                     break;
                     case 3://极速
                         Select_V_I(1);
@@ -1513,7 +1516,7 @@ void Test_Process(void)
                         read_adV_one();
 						if(V_ad>0x7fffff)
 								V_ad=0xffffff-V_ad;
-						V_ad/=80;
+						V_ad/=8;
                         Range_Value_V=V_ad;
                         VRange_Changecomp();	//换挡 比较
                         while(range_over)
@@ -1526,13 +1529,13 @@ void Test_Process(void)
 							read_adV_one();
 							if(V_ad>0x7fffff)
 							V_ad=0xffffff-V_ad;
-							V_ad/=80;
+							V_ad/=8;
 							Range_Value_V=V_ad;
 							VRange_Changecomp();	//换挡 比较
                         
                         
                         }
-						read_adV_4();
+						read_adV_1();
 						//Select_V_I(1);
                         break;
                     default:
@@ -1613,11 +1616,17 @@ void Test_Process(void)
          
                    
                }
+                if(polarity_v == 0 && disp_V <= Jk516save.Clear_V[V_Range]+10)
+				{
+					polarity_v = 1;
+					disp_V=Jk516save.Clear_V[V_Range] - disp_V;
+				}else{
+					disp_V=disp_V + Jk516save.Clear_V[V_Range];
+				}
                 
-                disp_V=disp_V-Jk516save.Clear_V[V_Range];
-                if((disp_V>0 && disp_V < 50) || (disp_V<0 && disp_V > -50))
+                if((disp_V>0 && disp_V < 100) || (disp_V<0 && disp_V > -100))
                 {
-//                    polarity_v=0;
+                    polarity_v=1;
                     disp_V=0;
                 
                 }
@@ -1645,127 +1654,134 @@ void Test_Process(void)
                     {
                         test_start=0;
                         Test_Value_V=V_Datacov(disp_V ,V_Range);//把数据的小数点和单位 和极性都加上
-						if(Range == 0)
+						if(V_Range == 1 && Test_Value_V.res > 60000)
 						{
-							Test_Value=Datacov(disp_I,Range);
+							open_flag=1;
+							Disp_Open();
 						}else{
-							Test_Value=Datacov(disp_I*10,Range);
-						}
-                        
-                        Disp_Testvalue(Test_Value,Test_Value_V,0);//显示电阻和电压
-                        if(Jk516save.Set_Data.V_comp)
-                        {
-                            test_Vsorting= V_Comp();
-                            if(polarity_v==0)
-                                test_Vsorting=2;
-                            
-                        }
-                        if(Jk516save.Set_Data.Res_comp)
-                            test_Rsorting=R_Comp();
-                        color=Colour.black;
-                        //下面是分选
-                       
-                        if(Jk516save.Set_Data.Res_comp==1&&Jk516save.Set_Data.V_comp==1)
-                        {
-                             
-                            Colour.black=LCD_COLOR_RED;
-                            if(test_Vsorting==0&&test_Rsorting==0)
-                            {
-                                Colour.black=LCD_COLOR_GREEN;
-                                memcpy(DispBuf,"RV GD",5);  
-                                
-                                Send_ComBuff.comp=0;
-                                Beep_Out(0);
-                                Led_Pass_On();
-                                
-                            
-                            }
-                            else 
-                            {
-                                Beep_Out(1);
-                                Led_Fail_On();
-                                if(test_Vsorting==0)
-                                {
-                                    memcpy(DispBuf,"R  FL",5);
-                                    Send_ComBuff.comp=1;
-                                }
-                                else if(test_Rsorting==0)
-                                {
-                                    memcpy(DispBuf,"V  FL",5);
-                                    Send_ComBuff.comp=2;
-                                    
-                                }
-                                else
-                                {
-                                    memcpy(DispBuf,"RV FL",5);
-                                    Send_ComBuff.comp=3;
+							
+							if(Range == 0)
+							{
+								Test_Value=Datacov(disp_I,Range);
+							}else{
+								Test_Value=Datacov(disp_I*10,Range);
+							}
+							
+							Disp_Testvalue(Test_Value,Test_Value_V,0);//显示电阻和电压
+							if(Jk516save.Set_Data.V_comp)
+							{
+								test_Vsorting= V_Comp();
+								if(polarity_v==0)
+									test_Vsorting=2;
+								
+							}
+							if(Jk516save.Set_Data.Res_comp)
+								test_Rsorting=R_Comp();
+							color=Colour.black;
+							//下面是分选
+						   
+							if(Jk516save.Set_Data.Res_comp==1&&Jk516save.Set_Data.V_comp==1)
+							{
+								 
+								Colour.black=LCD_COLOR_RED;
+								if(test_Vsorting==0&&test_Rsorting==0)
+								{
+									Colour.black=LCD_COLOR_GREEN;
+									memcpy(DispBuf,"RV GD",5);  
+									
+									Send_ComBuff.comp=0;
+									Beep_Out(0);
+									Led_Pass_On();
+									
+								
+								}
+								else 
+								{
+									Beep_Out(1);
+									Led_Fail_On();
+									if(test_Vsorting==0)
+									{
+										memcpy(DispBuf,"R  FL",5);
+										Send_ComBuff.comp=1;
+									}
+									else if(test_Rsorting==0)
+									{
+										memcpy(DispBuf,"V  FL",5);
+										Send_ComBuff.comp=2;
+										
+									}
+									else
+									{
+										memcpy(DispBuf,"RV FL",5);
+										Send_ComBuff.comp=3;
 
-                                }                                    
-                            }
-                            memcpy((void *)Send_To_U.comp,DispBuf,5);
-                            DispBuf[5]=0;
-                            LCD_DrawFullRect(SORTING_XDISP, SORTING_Y_DISP, 60, 22);
-                            WriteString_16(SORTING_XDISP, SORTING_Y_DISP, DispBuf,  0);
-                         Colour.black=color;
-                        }
-                        else
-                            if(Jk516save.Set_Data.Res_comp==1)
-                            {
-                                if(test_Rsorting)//不合格
-                                {
-                                    Colour.black=LCD_COLOR_RED;
-                                    memcpy(DispBuf,"R  FL",5);
-                                    Send_ComBuff.comp=1;                                    
-                                    Beep_Out(1);
-                                    Led_Fail_On();
-                                }
-                                else//合格
-                                {
-                                    Colour.black=LCD_COLOR_GREEN;
-                                    memcpy(DispBuf,"R  GD",5);
-                                    Send_ComBuff.comp=0;                                    
-                                    Beep_Out(0);
-                                    Led_Pass_On();
-                                
-                                }
-                            
-                             memcpy((void *)Send_To_U.comp,DispBuf,5);
-                             DispBuf[5]=0;
-							 LCD_DrawFullRect(SORTING_XDISP, SORTING_Y_DISP, 60, 22);
-                             WriteString_16(SORTING_XDISP, SORTING_Y_DISP, DispBuf,  0);
-                            
-                            }else if(Jk516save.Set_Data.V_comp==1)
-                            {
-                                if(test_Vsorting)//不合格
-                                {
-                                    Colour.black=LCD_COLOR_RED;
-                                    memcpy(DispBuf,"V  FL",5);
-                                    Send_ComBuff.comp=3;
-                                    Beep_Out(1);
-                                    Led_Fail_On();
-                                }
-                                else//合格
-                                {
-                                    Beep_Out(0);
-                                    Led_Pass_On();
-                                    Colour.black=LCD_COLOR_GREEN;
-                                    memcpy(DispBuf,"V  GD",5);
-                                    Send_ComBuff.comp=0;
-                                
-                                }
-                             memcpy((void *)Send_To_U.comp,DispBuf,5);
-                             DispBuf[5]=0; 
-							 LCD_DrawFullRect(SORTING_XDISP, SORTING_Y_DISP, 60, 22);
-                             WriteString_16(SORTING_XDISP, SORTING_Y_DISP, DispBuf,  0);
-                            }
-                            else
-                            {
-                            
-                            }
-                      
-                        
-                        
-                    }
+									}                                    
+								}
+								memcpy((void *)Send_To_U.comp,DispBuf,5);
+								DispBuf[5]=0;
+								LCD_DrawFullRect(SORTING_XDISP, SORTING_Y_DISP, 60, 22);
+								WriteString_16(SORTING_XDISP, SORTING_Y_DISP, DispBuf,  0);
+							 Colour.black=color;
+							}
+							else
+								if(Jk516save.Set_Data.Res_comp==1)
+								{
+									if(test_Rsorting)//不合格
+									{
+										Colour.black=LCD_COLOR_RED;
+										memcpy(DispBuf,"R  FL",5);
+										Send_ComBuff.comp=1;                                    
+										Beep_Out(1);
+										Led_Fail_On();
+									}
+									else//合格
+									{
+										Colour.black=LCD_COLOR_GREEN;
+										memcpy(DispBuf,"R  GD",5);
+										Send_ComBuff.comp=0;                                    
+										Beep_Out(0);
+										Led_Pass_On();
+									
+									}
+								
+								 memcpy((void *)Send_To_U.comp,DispBuf,5);
+								 DispBuf[5]=0;
+								 LCD_DrawFullRect(SORTING_XDISP, SORTING_Y_DISP, 60, 22);
+								 WriteString_16(SORTING_XDISP, SORTING_Y_DISP, DispBuf,  0);
+								
+								}else if(Jk516save.Set_Data.V_comp==1)
+								{
+									if(test_Vsorting)//不合格
+									{
+										Colour.black=LCD_COLOR_RED;
+										memcpy(DispBuf,"V  FL",5);
+										Send_ComBuff.comp=3;
+										Beep_Out(1);
+										Led_Fail_On();
+									}
+									else//合格
+									{
+										Beep_Out(0);
+										Led_Pass_On();
+										Colour.black=LCD_COLOR_GREEN;
+										memcpy(DispBuf,"V  GD",5);
+										Send_ComBuff.comp=0;
+									
+									}
+								 memcpy((void *)Send_To_U.comp,DispBuf,5);
+								 DispBuf[5]=0; 
+								 LCD_DrawFullRect(SORTING_XDISP, SORTING_Y_DISP, 60, 22);
+								 WriteString_16(SORTING_XDISP, SORTING_Y_DISP, DispBuf,  0);
+								}
+								else
+								{
+								
+								}
+						  
+							
+							
+						}
+					}
                     
                 }
             
@@ -2014,6 +2030,7 @@ void Test_Process(void)
                         switch(keynum)
                         {
                             case 0:
+								
                                  SetSystemStatus(SYS_STATUS_CLEAR);
                                 break;
 							case 4:
@@ -2386,7 +2403,7 @@ void Use_DebugProcess(void)
         Range_value=disp_I;
         Select_V_I(0);
          delay_ms(15);;
-		read_adV_4();
+		read_adV_1();
         Range_Value_V=disp_V;
 
 
@@ -2419,7 +2436,8 @@ void Use_DebugProcess(void)
                     
                 }
                 if(list>4)
-                disp_V=disp_V-Jk516save.Clear_V[list-5];
+//				disp_V=disp_V;
+                disp_V=disp_V+Jk516save.Clear_V[list-5];
                 //V_ad=V_ad/45;
                 {
                     Test_Value_V=V_Datacov(disp_V ,V_Range);//把数据的小数点和单位 和极性都加上
@@ -2607,7 +2625,7 @@ void Use_DebugProcess(void)
                     else
                     {
                       Jk516save.Debug_Value[list-1].standard=Debug_Set_Num(&Coordinates);//电压
-                        Jk516save.Debug_Value[list-1].ad_value=(float)Test_Value_V.res*10/Jk516save.Debug_Value[list-1].standard;
+                        Jk516save.Debug_Value[list-1].ad_value=(float)Test_Value_V.res/Jk516save.Debug_Value[list-1].standard;
                         
                     }
                     
@@ -2664,12 +2682,15 @@ void Clear_Process(void)
         else
             V_Range_Control(1);
         delay_ms(80);
-        read_adV_4();
+        read_adV_1();
 
             Jk516save.Clear[list]=disp_I;
             if(list<2)
             {
-                Jk516save.Clear_V[list]=disp_V;
+//				if(polarity_v == 0)
+//				{
+					Jk516save.Clear_V[list]=disp_V;
+//				}
                 range_v=list;
                 
             }
@@ -2708,7 +2729,11 @@ void Use_SysSetProcess(void)
 
  	while(GetSystemStatus()==SYS_STATUS_SYSSET)
 	{
-	  	
+	  	powerstat = PowerOffDetect();
+		if(powerstat == 0)
+		{
+			PowerOffHandle();
+		}
 		if(Disp_flag==1)
 		{
            
@@ -3205,6 +3230,11 @@ void Sys_Process(void)
 
 	while(GetSystemStatus()==SYS_STATUS_SYS)
 	{
+		powerstat = PowerOffDetect();
+		if(powerstat == 0)
+		{
+			PowerOffHandle();
+		}
 		if(Disp_flag==1)
 		{
 			Disp_Sys();
@@ -3431,37 +3461,37 @@ static uint8_t MODS_ReadRegValue(uint16_t reg_addr, uint8_t *reg_value)
 		}break;
 		case 1:
 		{
-			sendrvalue = Test_Value.res * 10;
+			sendrvalue = Test_Value.res;
 			sendunit = 0;
 		}break;
 		case 2:
 		{
-			sendrvalue = Test_Value.res * 100;
+			sendrvalue = Test_Value.res*10;
 			sendunit = 0;
 		}break;
 		case 3:
 		{
-			sendrvalue = Test_Value.res;
+			sendrvalue = Test_Value.res/10;
 			sendunit = 1;
 		}break;
 		case 4:
 		{
-			sendrvalue = Test_Value.res * 10;
+			sendrvalue = Test_Value.res;
 			sendunit = 1;
 		}break;
 		case 5:
 		{
-			sendrvalue = Test_Value.res * 100;
+			sendrvalue = Test_Value.res;
 			sendunit = 1;
 		}break;
 		case 6:
 		{
-			sendrvalue = Test_Value.res;
+			sendrvalue = Test_Value.res/10;
 			sendunit = 2;
 		}break;
 		
 	}
-	sendvvalue = Test_Value_V.res;
+	sendvvalue = Test_Value_V.res*10;
 	if(open_flag == 1)
 	{
 		sendrvalue = 0xffffffff;	
