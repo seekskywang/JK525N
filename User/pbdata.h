@@ -291,7 +291,7 @@ u8 GetSoftTimerOut(u8 id);
 
 // 电压量程上下限
 #define RANGE_LIMIT_VHIGH (60000)
-#define RANGE_LIMIT_VLOW (5600)
+#define RANGE_LIMIT_VLOW (4500)
 
 #define DEBUG_RANGE 6
 //==========================================================
@@ -603,10 +603,8 @@ typedef struct
 //    Testset_TypeDef Testset;//测试时的设置数据
 //    Sysconfig_TypeDef Sysconfig;//系统设置
     Set_Data_Typedef Set_Data;
-	Debug_Value_Typedef Debug_Value[DEBUG_RANGE];
+	
 	Sys_Setvalue_Typedef Sys_Setvalue;
-//	float clear;
-//	float V_Clear;
     float Clear[RANGE_MAX+1];
      float Clear_V[2];
     vu8 fac_num[10];
@@ -616,8 +614,15 @@ typedef struct
     
 
 }Jk516save_TypeDef;
-extern Jk516save_TypeDef    Jk516save;
 
+typedef struct
+{
+    Debug_Value_Typedef Debug_Value[DEBUG_RANGE];
+
+}Jk516cal_TypeDef;
+
+extern Jk516save_TypeDef    Jk516save;
+extern Jk516cal_TypeDef     Jk516cal;
 typedef struct//2516上面的测试完的数据存储
 {
     SystemRes_TypeDef newvalue[16];

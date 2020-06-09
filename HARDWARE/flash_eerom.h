@@ -10,7 +10,9 @@
 #define STORE_M5				(STORE_M4+0x800)
 
 void Read_set_flash(void);
+void Read_cal_flash(void);
 void Store_set_flash(void);
+void Store_cal_flash(void);
 void Read_compvalue(u8 data);
 
 #endif 

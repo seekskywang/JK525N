@@ -35,6 +35,7 @@ Calibrate_TypeDef Calibrate;
 Res_countTypeDef Res_count;
 System_TypeDef System;
 Jk516save_TypeDef    Jk516save;
+Jk516cal_TypeDef     Jk516cal;
 u8 USB_Openflag,Disp_usbflag,Disp_RTCflag;
 
 Com_TypeDef ComBuf;

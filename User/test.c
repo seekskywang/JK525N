@@ -325,6 +325,7 @@ void Power_Process(void)
     SPI_FLASH_Init();
 		InitGlobalValue();//初始化全局变量
 		Read_set_flash();
+		Read_cal_flash();
 		Parameter_valuecomp();//比较读出的数据
     TIM6_Configuration();//定时器6定时10ms
 		USBD_Init(&USB_OTG_dev,USB_OTG_HS_CORE_ID,
@@ -2478,7 +2479,7 @@ void Use_DebugProcess(void)
 				case Key_F4:
                     if(list==0)
                     {
-                        Store_set_flash();
+                        Store_cal_flash();
                         SetSystemStatus(SYS_STATUS_TEST);
                     }
 
@@ -2619,13 +2620,13 @@ void Use_DebugProcess(void)
                 {
                     if(list<5)
                     {
-                        Jk516save.Debug_Value[list-1].standard=Debug_Set_Res(&Coordinates)/10;//电阻
-                        Jk516save.Debug_Value[list-1].ad_value=(float)Test_Value.res/Jk516save.Debug_Value[list-1].standard;
+                        Jk516cal.Debug_Value[list-1].standard=Debug_Set_Res(&Coordinates)/10;//电阻
+                        Jk516cal.Debug_Value[list-1].ad_value=(float)Test_Value.res/Jk516cal.Debug_Value[list-1].standard;
                     }
                     else
                     {
-                      Jk516save.Debug_Value[list-1].standard=Debug_Set_Num(&Coordinates);//电压
-                        Jk516save.Debug_Value[list-1].ad_value=(float)Test_Value_V.res/Jk516save.Debug_Value[list-1].standard;
+                      Jk516cal.Debug_Value[list-1].standard=Debug_Set_Num(&Coordinates);//电压
+                        Jk516cal.Debug_Value[list-1].ad_value=(float)Test_Value_V.res/Jk516cal.Debug_Value[list-1].standard;
                         
                     }
                     

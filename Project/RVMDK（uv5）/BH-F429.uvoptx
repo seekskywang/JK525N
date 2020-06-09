@@ -167,135 +167,115 @@
         <Ww>
           <count>2</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Jk516save.Debug_Value,0x0A</ItemText>
+          <ItemText>DispBuf</ItemText>
         </Ww>
         <Ww>
           <count>3</count>
           <WinNumber>1</WinNumber>
-          <ItemText>DispBuf</ItemText>
+          <ItemText>Jk516save,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>4</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Jk516save,0x0A</ItemText>
+          <ItemText>powerstat</ItemText>
         </Ww>
         <Ww>
           <count>5</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Jk516save.Debug_Value,0x0A</ItemText>
+          <ItemText>DispBuf</ItemText>
         </Ww>
         <Ww>
           <count>6</count>
           <WinNumber>1</WinNumber>
-          <ItemText>powerstat</ItemText>
+          <ItemText>Send_ComBuff.send_res</ItemText>
         </Ww>
         <Ww>
           <count>7</count>
           <WinNumber>1</WinNumber>
-          <ItemText>DispBuf</ItemText>
+          <ItemText>Test_Value,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>8</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Send_ComBuff.send_res</ItemText>
+          <ItemText>midvalue,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>9</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Test_Value,0x0A</ItemText>
+          <ItemText>Jk516save.Clear_V</ItemText>
         </Ww>
         <Ww>
           <count>10</count>
           <WinNumber>1</WinNumber>
-          <ItemText>midvalue,0x0A</ItemText>
+          <ItemText>Jk516save.Clear</ItemText>
         </Ww>
         <Ww>
           <count>11</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Jk516save.Clear_V</ItemText>
+          <ItemText>copybuff</ItemText>
         </Ww>
         <Ww>
           <count>12</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Jk516save.Clear</ItemText>
+          <ItemText>Send_To_U</ItemText>
         </Ww>
         <Ww>
           <count>13</count>
           <WinNumber>1</WinNumber>
-          <ItemText>copybuff</ItemText>
+          <ItemText>pt</ItemText>
         </Ww>
         <Ww>
           <count>14</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Send_To_U</ItemText>
+          <ItemText>Sort_num,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>15</count>
           <WinNumber>1</WinNumber>
-          <ItemText>pt</ItemText>
+          <ItemText>Disp_buff</ItemText>
         </Ww>
         <Ww>
           <count>16</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Sort_num,0x0A</ItemText>
+          <ItemText>value_v</ItemText>
         </Ww>
         <Ww>
           <count>17</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Disp_buff</ItemText>
+          <ItemText>scan_V,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>18</count>
           <WinNumber>1</WinNumber>
-          <ItemText>value_v</ItemText>
+          <ItemText>Test_Value_V,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>19</count>
           <WinNumber>1</WinNumber>
-          <ItemText>scan_V,0x0A</ItemText>
+          <ItemText>Sort_num,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>20</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Test_Value_V,0x0A</ItemText>
+          <ItemText>Disp_buff</ItemText>
         </Ww>
         <Ww>
           <count>21</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Sort_num,0x0A</ItemText>
+          <ItemText>scan_I,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>22</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Disp_buff</ItemText>
+          <ItemText>Jk516save.Clear</ItemText>
         </Ww>
         <Ww>
           <count>23</count>
           <WinNumber>1</WinNumber>
-          <ItemText>scan_I,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>24</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>Jk516save.Debug_Value</ItemText>
-        </Ww>
-        <Ww>
-          <count>25</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>Jk516save.Clear</ItemText>
-        </Ww>
-        <Ww>
-          <count>26</count>
-          <WinNumber>1</WinNumber>
           <ItemText>LCD_Currentfonts,0x0A</ItemText>
         </Ww>
         <Ww>
-          <count>27</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>Jk516save.Debug_Value,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>28</count>
+          <count>24</count>
           <WinNumber>1</WinNumber>
           <ItemText>Test_Value_V.res,0x0A</ItemText>
         </Ww>
@@ -379,45 +359,30 @@
         <Ww>
           <count>15</count>
           <WinNumber>2</WinNumber>
-          <ItemText>Jk516save.Debug_Value,0x0A</ItemText>
+          <ItemText>Jk516save</ItemText>
         </Ww>
         <Ww>
           <count>16</count>
           <WinNumber>2</WinNumber>
-          <ItemText>Jk516save</ItemText>
+          <ItemText>V_Range</ItemText>
         </Ww>
         <Ww>
           <count>17</count>
           <WinNumber>2</WinNumber>
-          <ItemText>Jk516save.Debug_Value,0x0A</ItemText>
+          <ItemText>Jk516save.Clear_V</ItemText>
         </Ww>
         <Ww>
           <count>18</count>
           <WinNumber>2</WinNumber>
-          <ItemText>V_Range</ItemText>
+          <ItemText>polarity_v</ItemText>
         </Ww>
         <Ww>
           <count>19</count>
           <WinNumber>2</WinNumber>
-          <ItemText>Jk516save.Clear_V</ItemText>
-        </Ww>
-        <Ww>
-          <count>20</count>
-          <WinNumber>2</WinNumber>
-          <ItemText>polarity_v</ItemText>
-        </Ww>
-        <Ww>
-          <count>21</count>
-          <WinNumber>2</WinNumber>
-          <ItemText>Jk516save.Debug_Value,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>22</count>
-          <WinNumber>2</WinNumber>
           <ItemText>Test_Value_V.res,0x0A</ItemText>
         </Ww>
         <Ww>
-          <count>23</count>
+          <count>20</count>
           <WinNumber>2</WinNumber>
           <ItemText>Test_Value_V,0x0A</ItemText>
         </Ww>

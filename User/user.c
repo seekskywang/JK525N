@@ -565,22 +565,22 @@ void Parameter_valuecomp(void)
     
     if(Jk516save.Set_Data.Nominal_Res.Dot>5)
         Jk516save.Set_Data.Nominal_Res.Dot=3;
-    if(Jk516save.Set_Data.Nominal_Res.Num>1200000)
-        Jk516save.Set_Data.Nominal_Res.Num=12000;
+    if(Jk516save.Set_Data.Nominal_Res.Num>3000000)
+        Jk516save.Set_Data.Nominal_Res.Num=300000;
     if(Jk516save.Set_Data.Nominal_Res.Unit>5)
         Jk516save.Set_Data.Nominal_Res.Unit=0;
     
     if(Jk516save.Set_Data.High_Res.Dot>5)
         Jk516save.Set_Data.High_Res.Dot=3;
-    if(Jk516save.Set_Data.High_Res.Num>120000)
-        Jk516save.Set_Data.High_Res.Num=12000;
+    if(Jk516save.Set_Data.High_Res.Num>3000000)
+        Jk516save.Set_Data.High_Res.Num=3000000;
     if(Jk516save.Set_Data.High_Res.Unit>5)
         Jk516save.Set_Data.High_Res.Unit=0;
     
     if(Jk516save.Set_Data.Res_low.Dot>5)
         Jk516save.Set_Data.Res_low.Dot=3;
-    if(Jk516save.Set_Data.Res_low.Num>120000)
-        Jk516save.Set_Data.Res_low.Num=12000;
+    if(Jk516save.Set_Data.Res_low.Num>300000)
+        Jk516save.Set_Data.Res_low.Num=300000;
     if(Jk516save.Set_Data.Res_low.Unit>5)
         Jk516save.Set_Data.Res_low.Unit=0;
     
@@ -632,10 +632,10 @@ void Parameter_valuecomp(void)
     
     for(i=0;i<RANGE_MAX+2;i++)
     {
-        if((Jk516save.Debug_Value[i].ad_value>Debug_Limit[0]))
-            Jk516save.Debug_Value[i].ad_value=1;
-        if((Jk516save.Debug_Value[i].standard>Debug_Compvalue[i][0])||(Jk516save.Debug_Value[i].standard<Debug_Compvalue[i][1]))
-            Jk516save.Debug_Value[i].standard=Debug_Compvaluemind[i];
+        if((Jk516cal.Debug_Value[i].ad_value>Debug_Limit[0]))
+            Jk516cal.Debug_Value[i].ad_value=1;
+        if((Jk516cal.Debug_Value[i].standard>Debug_Compvalue[i][0])||(Jk516cal.Debug_Value[i].standard<Debug_Compvalue[i][1]))
+            Jk516cal.Debug_Value[i].standard=Debug_Compvaluemind[i];
         if(i<RANGE_MAX)
         {
             if(Jk516save.Clear[i]>=10000)
@@ -1235,8 +1235,8 @@ void Test_Debug(void)
 {
     float a,b;
  
-    disp_I=disp_I/Jk516save.Debug_Value[Range].ad_value;
-    disp_V=(float)disp_V/Jk516save.Debug_Value[4+V_Range].ad_value;
+    disp_I=disp_I/Jk516cal.Debug_Value[Range].ad_value;
+    disp_V=(float)disp_V/Jk516cal.Debug_Value[4+V_Range].ad_value;
    
 }
 
@@ -3499,9 +3499,13 @@ Sort_TypeDef Time_Set_Cov(Sort_TypeDef *Time)
 	if(value>=(float)1e7)
 	{
 		Time->Num=value/(float)1000;
+		if(Time->Num > 30000)
+		{
+			Time->Num = 30000;
+		}
 		Time->Dot=4;
 		Time->Unit=1;
-	
+		
 	
 	}
 //	else if(value>=(float)1e5)
@@ -3805,7 +3809,7 @@ void Disp_Debug_value(vu8 list)
 		
 			LCD_DrawFullRect( LIST1+160, FIRSTLINE+(SPACE1-2)*(i+1),90 , SPACE1-2 ) ; //SPACE1
 			
-			Hex_Format(Jk516save.Debug_Value[i].standard, Debug_Dot[i] , 6 , 0); //sprintf((char *)DispBuf,"%4",Save_Res;
+			Hex_Format(Jk516cal.Debug_Value[i].standard, Debug_Dot[i] , 6 , 0); //sprintf((char *)DispBuf,"%4",Save_Res;
 			
 			WriteString_16(LIST1+160, FIRSTLINE+(SPACE1-2)*(i+1), DispBuf,  1);
 				
@@ -3884,19 +3888,19 @@ void Debug_stanedcomp(void)
     vu8 i;
    for(i=0;i<DEBUG_RANGE;i++)
     {
-        if(Jk516save.Debug_Value[i].standard>Debug_Compvalue[i][1]||Jk516save.Debug_Value[i].standard<Debug_Compvalue[i][1])
+        if(Jk516cal.Debug_Value[i].standard>Debug_Compvalue[i][1]||Jk516cal.Debug_Value[i].standard<Debug_Compvalue[i][1])
         {
             if(i<DEBUG_RANGE-2)
             {
                 
-                 Jk516save.Debug_Value[i].standard=1000;
+                 Jk516cal.Debug_Value[i].standard=1000;
                     
                 
             }
             else
             {
             
-                Jk516save.Debug_Value[i].standard=60000;
+                Jk516cal.Debug_Value[i].standard=60000;
             
             }
         }
