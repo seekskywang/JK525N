@@ -91,3 +91,4 @@
 ..\..\output\test.o: ..\..\User\usb\usbd_desc.h
 ..\..\output\test.o: ..\..\User\flash_if.h
 ..\..\output\test.o: ..\..\User\flash_if.h
+..\..\output\test.o: ..\..\User\./internalFlash/bsp_internalFlash.h

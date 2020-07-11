@@ -350,15 +350,17 @@ const uint8_t BiasButton_Tip[][7+1]=  //频率选择时候的下面的提示符号
 const uint8_t Sys_Sys[][20+1]=
 {
 	{"仪器型号:  JK625  "},
-	{"软件版本:  Ver:1.2"},
+	{"软件版本:  Ver:1.4"},
 	{"硬件版本:  Ver:1.0"},
 	{"仪器编号:"},
 
 };
+//1.3修改校准数据存到内部flash
+//1.4修改设置数据存到内部flash
 const uint8_t Sys_Sys_E[][20+1]=
 {
 	{"INST MODEL:  JK625 "},
-	{"SOFT VER:   Ver:1.2"},
+	{"SOFT VER:   Ver:1.4"},
 	{"HARD VER:   Ver:1.0"},
 	{"SERIALNO:"},
 
@@ -630,24 +632,24 @@ void Parameter_valuecomp(void)
     
     }
     
-    for(i=0;i<RANGE_MAX+2;i++)
-    {
-        if((Jk516cal.Debug_Value[i].ad_value>Debug_Limit[0]))
-            Jk516cal.Debug_Value[i].ad_value=1;
-        if((Jk516cal.Debug_Value[i].standard>Debug_Compvalue[i][0])||(Jk516cal.Debug_Value[i].standard<Debug_Compvalue[i][1]))
-            Jk516cal.Debug_Value[i].standard=Debug_Compvaluemind[i];
-        if(i<RANGE_MAX)
-        {
-            if(Jk516save.Clear[i]>=10000)
-                Jk516save.Clear[i]=0;
-        
-        }
-        else
-        {
-            if(Jk516save.Clear_V[i-RANGE_MAX]>=500000)
-                Jk516save.Clear_V[i-RANGE_MAX]=0;
-        }       
-    }
+//    for(i=0;i<RANGE_MAX+2;i++)
+//    {
+//        if((Jk516cal.Debug_Value[i].ad_value>Debug_Limit[0]))
+//            Jk516cal.Debug_Value[i].ad_value=1;
+//        if((Jk516cal.Debug_Value[i].standard>Debug_Compvalue[i][0])||(Jk516cal.Debug_Value[i].standard<Debug_Compvalue[i][1]))
+//            Jk516cal.Debug_Value[i].standard=Debug_Compvaluemind[i];
+//        if(i<RANGE_MAX)
+//        {
+//            if(Jk516save.Clear[i]>=10000)
+//                Jk516save.Clear[i]=0;
+//        
+//        }
+//        else
+//        {
+//            if(Jk516save.Clear_V[i-RANGE_MAX]>=500000)
+//                Jk516save.Clear_V[i-RANGE_MAX]=0;
+//        }       
+//    }
 
 }
 //==========================================================
@@ -1717,7 +1719,7 @@ void Disp_Open(void)
 //        else
         {
             WriteString_Big ( TESTVALUE_X+32+48, 168+3, "------",2 );
-            WriteString_Big ( TESTVALUE_X+32+48, 268+3, "------",2 );
+            WriteString_Big ( TESTVALUE_X+32, 268+3, " ------",2 );
         
         }
     }

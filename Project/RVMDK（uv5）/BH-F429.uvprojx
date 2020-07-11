@@ -337,7 +337,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,STM32F429_439xx,USE_USB_OTG_FS</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\..\Libraries\CMSIS\Include;..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\..\User;..\..\HARDWARE;..\..\User\lcd;..\..\FATFS;..\..\User\flash;..\..\HARDWARE\font;..\..\User\APP;..\..\User\RTC;..\..\FILESYS;..\..\User\beep;..\..\User\usb;..\..\USBD_FS_HID;..\..\USBD_FS_Lib\USBD_inc;..\..\Libraries\STM32_USB_HOST_Library\Core\inc;..\..\Libraries\STM32_USB_OTG_Driver\inc;..\..\Libraries\STM32_USB_HOST_Library\Class\MSC\inc;..\..\User\FATFS;..\..\User\sdio</IncludePath>
+              <IncludePath>..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\..\Libraries\CMSIS\Include;..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\..\User;..\..\HARDWARE;..\..\User\lcd;..\..\FATFS;..\..\User\flash;..\..\HARDWARE\font;..\..\User\APP;..\..\User\RTC;..\..\FILESYS;..\..\User\beep;..\..\User\usb;..\..\USBD_FS_HID;..\..\USBD_FS_Lib\USBD_inc;..\..\Libraries\STM32_USB_HOST_Library\Core\inc;..\..\Libraries\STM32_USB_OTG_Driver\inc;..\..\Libraries\STM32_USB_HOST_Library\Class\MSC\inc;..\..\User\FATFS;..\..\User\sdio;..\..\User\internalFlash</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -806,6 +806,11 @@
               <FileName>flash_if.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\flash_if.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_internalFlash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\internalFlash\bsp_internalFlash.c</FilePath>
             </File>
           </Files>
         </Group>

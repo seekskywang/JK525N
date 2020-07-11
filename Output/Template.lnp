@@ -67,6 +67,7 @@
 "..\..\output\bsp_beep.o"
 "..\..\output\bsp_sdio_sd.o"
 "..\..\output\flash_if.o"
+"..\..\output\bsp_internalflash.o"
 "..\..\output\diskio.o"
 "..\..\output\ff.o"
 "..\..\output\cc936.o"

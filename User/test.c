@@ -15,6 +15,7 @@
 #include  "usbd_usr.h"
 #include  "usbd_desc.h"
 #include "flash_if.h"
+#include "./internalFlash/bsp_internalFlash.h"   
 //反馈切换
 // 输入0 1 2 3  U16_4094
 // 0  1000V
@@ -269,8 +270,81 @@ u8 udisk_scan(void)
 	return UDISK_NOTREADY;
 }
 
+//将缓冲区指定长度数据写到MCU flash 指定的地址
+void FlashWrite(u32*Buffer,u32 Address,u16 length)
+{
+    u16  i;
+    
+    FLASH_Unlock(); 
+	for(i = 0; i < length; i ++){
+		FLASH_ProgramWord(Address+ (i*4), Buffer[i]);
+	}	
+    FLASH_Lock();
+        
+}
+
+/****************************************************************************
+* 功    能: 读取长度为length的32位数据
+* 入口参数：address：地址
+length： 数据长度
+data_32  指向读出的数据
+* 出口参数：无
+* 说    明：无
+* 调用方法：无
+****************************************************************************/
+void Flash_Read32BitDatas(uint32_t address, uint16_t length, u32* data_32)
+{
+	uint16_t i;
+	for(i=0; i<length; i++)
+	{
+		data_32[i]=*(__IO int32_t*)address;
+		address=address + 4;
+	}
+}
+
+u8 CAL_ERASE(void)
+{
+	u8 state;
+	FLASH_Unlock();
+	FLASH_ClearFlag(FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR | 
+                  FLASH_FLAG_PGAERR | FLASH_FLAG_PGPERR|FLASH_FLAG_PGSERR);
+	state=FLASH_EraseSector(FLASH_Sector_12, VoltageRange_3);
+    return state;
+}
+
+u8 SET_ERASE(void)
+{
+	u8 state;
+	FLASH_Unlock();
+	FLASH_ClearFlag(FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR | 
+                  FLASH_FLAG_PGAERR | FLASH_FLAG_PGPERR|FLASH_FLAG_PGSERR);
+	state=FLASH_EraseSector(FLASH_Sector_13, VoltageRange_3);
+    return state;
+}
+
+void Store_cal_flash(void)
+{
+	while(CAL_ERASE() != FLASH_COMPLETE);
+	FlashWrite((u32*)&Jk516cal,ADDR_CAL_SECTOR,sizeof(Jk516cal));
+}
 
 
+void Read_cal_flash(void)
+{
+	Flash_Read32BitDatas(ADDR_CAL_SECTOR,sizeof(Jk516cal),(u32*)&Jk516cal);
+}
+
+void Store_set_flash(void)
+{
+	while(SET_ERASE() != FLASH_COMPLETE);
+//	SET_ERASE();
+	FlashWrite((u32*)&Jk516save,ADDR_SET_SECTOR,sizeof(Jk516save));
+}
+
+void Read_set_flash(void)
+{
+	Flash_Read32BitDatas(ADDR_SET_SECTOR,sizeof(Jk516save),(u32*)&Jk516save);
+}
 
 void Power_Process(void)
 {
@@ -323,9 +397,13 @@ void Power_Process(void)
 		lcd_image((uint8_t *)gImage_open);
     TIM_PWMOUTPUT_Config(50);
     SPI_FLASH_Init();
-		InitGlobalValue();//初始化全局变量
+//		InitGlobalValue();//初始化全局变量
 		Read_set_flash();
+		delay_ms(100);
 		Read_cal_flash();
+		
+		
+		
 		Parameter_valuecomp();//比较读出的数据
     TIM6_Configuration();//定时器6定时10ms
 		USBD_Init(&USB_OTG_dev,USB_OTG_HS_CORE_ID,
@@ -1622,7 +1700,12 @@ void Test_Process(void)
 					polarity_v = 1;
 					disp_V=Jk516save.Clear_V[V_Range] - disp_V;
 				}else{
-					disp_V=disp_V + Jk516save.Clear_V[V_Range];
+//					if(Jk516save.Clear_V[V_Range] > 0)
+//					{
+						disp_V=disp_V - Jk516save.Clear_V[V_Range];
+//					}else{
+//						disp_V=disp_V + Jk516save.Clear_V[V_Range];
+//					}
 				}
                 
                 if((disp_V>0 && disp_V < 100) || (disp_V<0 && disp_V > -100))
@@ -1779,7 +1862,58 @@ void Test_Process(void)
 								
 								}
 						  
-							
+							if(Jk516save.Sys_Setvalue.u_flag)
+							{
+					//			i=1001;
+					//            
+					//			while(i--)
+								udisk_scan();
+
+								if(usbstatus == CONNECTED)
+								{
+									vu8 copybuff[100];
+									memset((void *)copybuff,0,100);
+
+									if(fileflag == 0)
+									{
+										memcpy ((void *)copybuff,"/",1);
+										strcat((char *)copybuff,(char *)Jk516save.Sys_Setvalue.textname);
+										strcat((char *)copybuff,(char *)".XLS");
+										result=CH376FileOpenPath(copybuff);
+										if(result == ERR_MISS_FILE)
+										{
+											result = CH376FileCreatePath(copybuff);
+											if(result == USB_INT_SUCCESS)
+											{
+												CH376ByteWrite( "序号\t电阻\t电压\t分选\r\n", strlen("序号\t电阻\t电压\t分选\r\n"), NULL );
+												if(result == USB_INT_SUCCESS)
+												{
+													result = CH376FileClose(TRUE);
+												}
+											}
+										}
+										fileflag = 1;
+									}else{
+										memcpy ((void *)copybuff,"/",1);
+										strcat((char *)copybuff,(char *)Jk516save.Sys_Setvalue.textname);
+										strcat((char *)copybuff,(char *)".XLS");
+										result=CH376FileOpenPath(copybuff);
+										result = CH376ByteLocate(0xFFFFFFFF);
+										if(result == USB_INT_SUCCESS)
+										{
+											pt=Send_To_U;
+											CH376ByteWrite((u8 *)&pt, sizeof(Send_To_U), NULL );
+											if(result == USB_INT_SUCCESS)
+											{
+												result = CH376FileClose(TRUE);
+											}
+										}
+									}
+								}else{
+									fileflag = 0;
+									Disp_usbflag=0;
+								}
+							}
 							
 						}
 					}
@@ -1787,58 +1921,58 @@ void Test_Process(void)
                 }
             
 		}
-        if(Jk516save.Sys_Setvalue.u_flag)
-        {
-//			i=1001;
-//            
-//			while(i--)
-            udisk_scan();
+//		if(Jk516save.Sys_Setvalue.u_flag)
+//		{
+//	//			i=1001;
+//	//            
+//	//			while(i--)
+//			udisk_scan();
 
-			if(usbstatus == CONNECTED)
-			{
-				vu8 copybuff[100];
-                memset((void *)copybuff,0,100);
+//			if(usbstatus == CONNECTED)
+//			{
+//				vu8 copybuff[100];
+//				memset((void *)copybuff,0,100);
 
-				if(fileflag == 0)
-				{
-					memcpy ((void *)copybuff,"/",1);
-					strcat((char *)copybuff,(char *)Jk516save.Sys_Setvalue.textname);
-					strcat((char *)copybuff,(char *)".XLS");
-					result=CH376FileOpenPath(copybuff);
-					if(result == ERR_MISS_FILE)
-					{
-						result = CH376FileCreatePath(copybuff);
-						if(result == USB_INT_SUCCESS)
-						{
-							CH376ByteWrite( "序号\t电阻\t电压\t分选\r\n", strlen("序号\t电阻\t电压\t分选\r\n"), NULL );
-							if(result == USB_INT_SUCCESS)
-							{
-								result = CH376FileClose(TRUE);
-							}
-						}
-					}
-					fileflag = 1;
-				}else{
-					memcpy ((void *)copybuff,"/",1);
-					strcat((char *)copybuff,(char *)Jk516save.Sys_Setvalue.textname);
-					strcat((char *)copybuff,(char *)".XLS");
-					result=CH376FileOpenPath(copybuff);
-					result = CH376ByteLocate(0xFFFFFFFF);
-					if(result == USB_INT_SUCCESS)
-					{
-						pt=Send_To_U;
-						CH376ByteWrite((u8 *)&pt, sizeof(Send_To_U), NULL );
-						if(result == USB_INT_SUCCESS)
-						{
-							result = CH376FileClose(TRUE);
-						}
-					}
-				}
-            }else{
-				fileflag = 0;
-				Disp_usbflag=0;
-			}
-        }
+//				if(fileflag == 0)
+//				{
+//					memcpy ((void *)copybuff,"/",1);
+//					strcat((char *)copybuff,(char *)Jk516save.Sys_Setvalue.textname);
+//					strcat((char *)copybuff,(char *)".XLS");
+//					result=CH376FileOpenPath(copybuff);
+//					if(result == ERR_MISS_FILE)
+//					{
+//						result = CH376FileCreatePath(copybuff);
+//						if(result == USB_INT_SUCCESS)
+//						{
+//							CH376ByteWrite( "序号\t电阻\t电压\t分选\r\n", strlen("序号\t电阻\t电压\t分选\r\n"), NULL );
+//							if(result == USB_INT_SUCCESS)
+//							{
+//								result = CH376FileClose(TRUE);
+//							}
+//						}
+//					}
+//					fileflag = 1;
+//				}else{
+//					memcpy ((void *)copybuff,"/",1);
+//					strcat((char *)copybuff,(char *)Jk516save.Sys_Setvalue.textname);
+//					strcat((char *)copybuff,(char *)".XLS");
+//					result=CH376FileOpenPath(copybuff);
+//					result = CH376ByteLocate(0xFFFFFFFF);
+//					if(result == USB_INT_SUCCESS)
+//					{
+//						pt=Send_To_U;
+//						CH376ByteWrite((u8 *)&pt, sizeof(Send_To_U), NULL );
+//						if(result == USB_INT_SUCCESS)
+//						{
+//							result = CH376FileClose(TRUE);
+//						}
+//					}
+//				}
+//			}else{
+//				fileflag = 0;
+//				Disp_usbflag=0;
+//			}
+//		}
              
 		Uart_Process();//串口处理
 		tp_dev.scan(0); 		 
@@ -2382,7 +2516,7 @@ void Use_DebugProcess(void)
     test_start=0;
     LCD_Clear(LCD_COLOR_TEST_BACK);
 	Disp_UserCheck_Item();
-    Debug_stanedcomp();//校正值比较
+//    Debug_stanedcomp();//校正值比较
     EXTI_ClearITPendingBit(KEY1_INT_EXTI_LINE); 
     NVIC_EnableIRQ(EXTI3_IRQn);
     Range_Control(0);
@@ -2438,7 +2572,12 @@ void Use_DebugProcess(void)
                 }
                 if(list>4)
 //				disp_V=disp_V;
-                disp_V=disp_V+Jk516save.Clear_V[list-5];
+				if(polarity_v == 0)
+				{
+					disp_V=disp_V+Jk516save.Clear_V[list-5];
+				}else{
+					disp_V=disp_V-Jk516save.Clear_V[list-5];
+				}
                 //V_ad=V_ad/45;
                 {
                     Test_Value_V=V_Datacov(disp_V ,V_Range);//把数据的小数点和单位 和极性都加上
@@ -2620,7 +2759,12 @@ void Use_DebugProcess(void)
                 {
                     if(list<5)
                     {
-                        Jk516cal.Debug_Value[list-1].standard=Debug_Set_Res(&Coordinates)/10;//电阻
+						if(list == 3)
+						{
+							Jk516cal.Debug_Value[list-1].standard=Debug_Set_Res(&Coordinates);//电阻
+						}else{
+							Jk516cal.Debug_Value[list-1].standard=Debug_Set_Res(&Coordinates)/10;//电阻
+						}
                         Jk516cal.Debug_Value[list-1].ad_value=(float)Test_Value.res/Jk516cal.Debug_Value[list-1].standard;
                     }
                     else
@@ -2688,10 +2832,12 @@ void Clear_Process(void)
             Jk516save.Clear[list]=disp_I;
             if(list<2)
             {
-//				if(polarity_v == 0)
-//				{
+				if(polarity_v == 0)
+				{
+					Jk516save.Clear_V[list]=-disp_V;
+				}else{
 					Jk516save.Clear_V[list]=disp_V;
-//				}
+				}
                 range_v=list;
                 
             }

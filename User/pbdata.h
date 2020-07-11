@@ -617,7 +617,7 @@ typedef struct
 
 typedef struct
 {
-    Debug_Value_Typedef Debug_Value[DEBUG_RANGE];
+    Debug_Value_Typedef Debug_Value[6];
 
 }Jk516cal_TypeDef;
 
