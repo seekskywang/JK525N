@@ -1,5 +1,6 @@
 #include "pbdata.h"
 #include <math.h>
+#include <stdlib.h>
 #include "ff.h"
 #include "cpld.h"
 //#include "./APP/usbh_bsp.h"
@@ -1695,10 +1696,10 @@ void Test_Process(void)
          
                    
                }
-                if(polarity_v == 0 && disp_V <= Jk516save.Clear_V[V_Range]+10)
+                if(polarity_v == 0 && disp_V <= abs(Jk516save.Clear_V[V_Range])+10)
 				{
 					polarity_v = 1;
-					disp_V=Jk516save.Clear_V[V_Range] - disp_V;
+					disp_V=abs(Jk516save.Clear_V[V_Range]) - disp_V;
 				}else{
 //					if(Jk516save.Clear_V[V_Range] > 0)
 //					{

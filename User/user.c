@@ -350,19 +350,20 @@ const uint8_t BiasButton_Tip[][7+1]=  //频率选择时候的下面的提示符号
 const uint8_t Sys_Sys[][20+1]=
 {
 	{"仪器型号:  JK625  "},
-	{"软件版本:  Ver:1.4"},
+	{"软件版本:  Ver:1.5"},
 	{"硬件版本:  Ver:1.0"},
 	{"仪器编号:"},
 
 };
 //1.3修改校准数据存到内部flash
 //1.4修改设置数据存到内部flash
+//1.5修改手动触发只存一次数据
 const uint8_t Sys_Sys_E[][20+1]=
 {
 	{"INST MODEL:  JK625 "},
-	{"SOFT VER:   Ver:1.4"},
+	{"SOFT VER:   Ver:1.5"},
 	{"HARD VER:   Ver:1.0"},
-	{"SERIALNO:"},
+	{"SERIALNO:"},	
 
 };
 const uint8_t Range_Disp_Test[][7][11+1]=
