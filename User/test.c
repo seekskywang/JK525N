@@ -397,10 +397,10 @@ void Power_Process(void)
 		LCD_Clear(LCD_COLOR_BLACK);
 		lcd_image((uint8_t *)gImage_open);
     TIM_PWMOUTPUT_Config(50);
-    SPI_FLASH_Init();
+//    SPI_FLASH_Init();
 //		InitGlobalValue();//初始化全局变量
 		Read_set_flash();
-		delay_ms(100);
+		delay_ms(500);
 		Read_cal_flash();
 		
 		
@@ -416,8 +416,8 @@ void Power_Process(void)
     Range=Jk516save.Set_Data.Range;
     Range_Control(Range);
     RangeChange_Flag=1;
-		Touch_GPIO_Config();
-		tp_dev.init();				//触摸屏初始化
+//		Touch_GPIO_Config();
+//		tp_dev.init();				//触摸屏初始化
 	
 		while( GetSystemStatus() == SYS_STATUS_POWER )
 		{
