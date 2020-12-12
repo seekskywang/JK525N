@@ -10,7 +10,9 @@ int main(void)
     Int_Pe3flag=0;
     SetSystemStatus(SYS_STATUS_POWER);
     GPIO_Configuration();//¶Ë¿Ú³õÊ¼»¯
-
+	Read_set_flash();
+	delay_ms(500);
+	Read_cal_flash();
 	while(1)
 	{
 		switch(GetSystemStatus())

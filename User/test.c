@@ -399,19 +399,18 @@ void Power_Process(void)
     TIM_PWMOUTPUT_Config(50);
 //    SPI_FLASH_Init();
 //		InitGlobalValue();//初始化全局变量
-		Read_set_flash();
-		delay_ms(500);
-		Read_cal_flash();
 		
-		
-		
-		Parameter_valuecomp();//比较读出的数据
     TIM6_Configuration();//定时器6定时10ms
 		USBD_Init(&USB_OTG_dev,USB_OTG_HS_CORE_ID,
            &USR_desc,&USBD_HID_cb,&USR_cb);
 		   
 		MenuIndex=0;//待机菜单项
 		i=0;//显示延时
+	
+	
+	
+	
+	Parameter_valuecomp();//比较读出的数据
     open_flag=1;
     Range=Jk516save.Set_Data.Range;
     Range_Control(Range);
@@ -559,362 +558,362 @@ void Setup_Process(void)
 			Disp_Flag=0;
 		
 		}
-		tp_dev.scan(0); 		 
-		if(tp_dev.sta&TP_PRES_DOWN)			//触摸屏被按下
-		{
-			
-			if(tp_dev.x[0]<640&&tp_dev.y[0]<480)
-			{	
+//		tp_dev.scan(0); 		 
+//		if(tp_dev.sta&TP_PRES_DOWN)			//触摸屏被按下
+//		{
+//			
+//			if(tp_dev.x[0]<640&&tp_dev.y[0]<480)
+//			{	
 
-				for(i=0;i<5;i++)
-				{
-					if((tp_dev.x[0]>(24+BUTTON_W*i))&&(tp_dev.x[0]<(24+BUTTON_W*(i+1)))&&(tp_dev.y[0]>BUTTON_1))
-					{
-						touch_value=i;
-						Disp_Flag=1;
-						break;
-						
-					}
-					else
-						touch_value=0xff;
-				}
-				if(touch_value==0xff)//没有检测到触摸屏 接着往下检测
-				{
-					for(i=0;i<16;i++)
-					{
-						if(i<16/2)
-						{
-							if(((tp_dev.x[0]>DISPX1)&&(tp_dev.x[0]<DISPX1+RECT))&&(tp_dev.y[0]<(FIRSTLINE+HIGH1*(i+1)))&&(tp_dev.y[0]>(FIRSTLINE+HIGH1*i)))
-							{	
-								touch_value=i+5;
-								Disp_Flag=1;
-								break;
-							}
-							
-						}
-						else
-						{
-							if(((tp_dev.x[0]>DISPX2)&&(tp_dev.x[0]<DISPX2+RECT))&&(tp_dev.y[0]<(FIRSTLINE+HIGH1*(i-8+1)))&&(tp_dev.y[0]>(FIRSTLINE+HIGH1*(i-8))))
-							{	
-								touch_value=i+5;
-								Disp_Flag=1;
-								break;
-							}
-						
-						}
-										
-					}
-				
-				}	
-				
-				switch(touch_value)
-					{
-						case 0:
-							switch(keynum)
-							{
-								case 0:
-									SetSystemStatus(SYS_STATUS_TEST);
-									ButtonSound();
-								break;
-								case 1:
-									Jk516save .Set_Data.trip=0;
-									ButtonSound();
-									break;
-								case 2:
-									Jk516save .Set_Data.speed=0;
-									ButtonSound();
-									break;
-								case 3:
-									Jk516save .Set_Data.Res_comp=0;
-									ButtonSound();
-									break;
-								case 4:
-									break;
-								case 5:
-									Jk516save .Set_Data.V_comp=0;
-									ButtonSound();
-									break;
-								case 6:
-									break;
-								case 7:
-									Jk516save.Set_Data.Range_Set=0;
-									Jk516save.Set_Data.Range=0;//自动
-									ButtonSound();
-									break;
-								case 8:
-									Jk516save .Set_Data.beep=0;
-									ButtonSound();
-									break;
-								case 9:
-									break;
-								case 10:
-									break;
-								case 11:
-									break;
-								case 12:
-									break;
-								
-								default :
-									break;
-								
-							}
-							break;
-						case 1:
-							switch(keynum)
-							{
-								case 0:
-									//SetSystemStatus(SYS_STATUS_TEST);
-								break;
-								case 1:
-									Jk516save .Set_Data.trip=1;
-									ButtonSound();
-									break;
-								case 2:
-									//Jk516save .Set_Data.speed=1;
-									break;
-								case 3:
-									Jk516save .Set_Data.Res_comp=1;
-									ButtonSound();
-									break;
-								case 4:
-									break;
-								case 5:
-									Jk516save .Set_Data.V_comp=1;
-									ButtonSound();
-									break;
-								case 6:
-									break;
-								case 7:
-									Jk516save.Set_Data.Range_Set=1;
-									ButtonSound();
-									break;
-								case 8:
-									Jk516save .Set_Data.beep=1;
-									ButtonSound();
-									break;
-								case 9:
-									break;
-								case 10:
-									break;
-								case 11:
-									break;
-								case 12:
-									break;
-								
-								default :
-									break;
-								
-							}
-							break;
-							
-						case 2:
-							switch(keynum)
-							{
-								case 0:
-									SetSystemStatus(SYS_STATUS_SYSSET);
-									ButtonSound();
-								break;
-								case 1:
-									//Jk516save .Set_Data.trip=0;
-									break;
-								case 2:
-									//Jk516save .Set_Data.trip=0;
-									break;
-								case 3:
-									break;
-								case 4:
-									break;
-								case 5:
-									break;
-								case 6:
-									break;
-								case 7:
-									Jk516save.Set_Data.Range_Set=2;//增加档位选择的计算
-									Range=Jisuan_Range(Jk516save.Set_Data.Nominal_Res);
-									Jk516save.Set_Data.Range=Range;
-									Range_Control(Range);
-									ButtonSound();
-									break;
-								case 8:
-									Jk516save .Set_Data.beep=2;
-									ButtonSound();
-									break;
-								case 9:
-									break;
-								case 10:
-									break;
-								case 11:
-									break;
-								case 12:
-									break;
-								
-								default :
-									break;
-								
-							}
-							break;
-							//SetSystemStatus();
-							
-						case 3:
-							switch(keynum)
-							{
-								case 0:
-									SetSystemStatus(SYS_STATUS_SYS);
-									ButtonSound();
-								break;
-								case 1:
-									//Jk516save .Set_Data.trip=0;
-									break;
-								case 2:
-									//Jk516save .Set_Data.trip=0;
-									break;
-								case 3:
-									break;
-								case 4:
-									break;
-								case 5:
-									break;
-								case 6:
-									break;
-								case 7:
-									Jk516save.Set_Data.Range_Set=1;
-									if(Jk516save.Set_Data.Range<RANGE_MAX)
-										Jk516save.Set_Data.Range++;
-									else
-										Jk516save.Set_Data.Range=0;
-									Range=Jk516save.Set_Data.Range;
-									ButtonSound();
-									break;
-								case 8:
-									break;
-								case 9:
-									break;
-								case 10:
-									break;
-								case 11:
-									break;
-								case 12:
-									break;
-								
-								default :
-									break;
-								
-							}
-							break;
-							//SetSystemStatus();
-							
-						case 4:
-							switch(keynum)
-							{
-								case 0:
-									//SetSystemStatus(SYS_STATUS_TEST);
-								break;
-								case 1:
-									//Jk516save .Set_Data.trip=0;
-									break;
-								case 2:
-									//Jk516save .Set_Data.trip=0;
-									break;
-								case 3:
-									break;
-								case 4:
-									break;
-								case 5:
-									break;
-								case 6:
-									break;
-								case 7:
-									Jk516save.Set_Data.Range_Set=1;
-									if(Jk516save.Set_Data.Range<RANGE_MAX)
-										Jk516save.Set_Data.Range++;
-									else
-										Jk516save.Set_Data.Range=0;
-									Range=Jk516save.Set_Data.Range;
-									ButtonSound();
-									break;
-								case 8:
-									break;
-								case 9:
-									break;
-								case 10:
-									break;
-								case 11:
-									break;
-								case 12:
-									break;
-								
-								default :
-									break;
-								
-							}
-							break;
-						case 5:
-							keynum=1;
-							ButtonSound();
-							break;
-						case 6:
-							keynum=2;
-							ButtonSound();
-							break;
-						case 7:
-							//keynum=3;
-							break;
-						case 8:
-							keynum=3;
-							ButtonSound();
-							break;
-						case 9://弹出数字框
-							keynum=4;
-							ButtonSound();
-							break;
-						case 10:
-							//keynum=5;
-							break;
-						case 11:
-							keynum=5;
-							ButtonSound();
-							break;
-						case 12:
-							keynum=6;
-							ButtonSound();
-							break;
-						case 13:
-							keynum=7;
-							ButtonSound();
-							break;
-						
-						case 14:
-							keynum=8;
-							ButtonSound();
-							break;
-						case 15:
-							break;
-						case 16:
-							keynum=9;
-							ButtonSound();
-							break;
-						case 17:
-							keynum=10;
-							ButtonSound();
-							break;
-						case 18:
-							break;
-						case 19:
-							keynum=11;
-							ButtonSound();
-							break;
-						case 20:
-							keynum=12;
-							ButtonSound();
-							break;
-						default:
-							break;
-					
-					
-					}
-			}
-		
-		}
+//				for(i=0;i<5;i++)
+//				{
+//					if((tp_dev.x[0]>(24+BUTTON_W*i))&&(tp_dev.x[0]<(24+BUTTON_W*(i+1)))&&(tp_dev.y[0]>BUTTON_1))
+//					{
+//						touch_value=i;
+//						Disp_Flag=1;
+//						break;
+//						
+//					}
+//					else
+//						touch_value=0xff;
+//				}
+//				if(touch_value==0xff)//没有检测到触摸屏 接着往下检测
+//				{
+//					for(i=0;i<16;i++)
+//					{
+//						if(i<16/2)
+//						{
+//							if(((tp_dev.x[0]>DISPX1)&&(tp_dev.x[0]<DISPX1+RECT))&&(tp_dev.y[0]<(FIRSTLINE+HIGH1*(i+1)))&&(tp_dev.y[0]>(FIRSTLINE+HIGH1*i)))
+//							{	
+//								touch_value=i+5;
+//								Disp_Flag=1;
+//								break;
+//							}
+//							
+//						}
+//						else
+//						{
+//							if(((tp_dev.x[0]>DISPX2)&&(tp_dev.x[0]<DISPX2+RECT))&&(tp_dev.y[0]<(FIRSTLINE+HIGH1*(i-8+1)))&&(tp_dev.y[0]>(FIRSTLINE+HIGH1*(i-8))))
+//							{	
+//								touch_value=i+5;
+//								Disp_Flag=1;
+//								break;
+//							}
+//						
+//						}
+//										
+//					}
+//				
+//				}	
+//				
+//				switch(touch_value)
+//					{
+//						case 0:
+//							switch(keynum)
+//							{
+//								case 0:
+//									SetSystemStatus(SYS_STATUS_TEST);
+//									ButtonSound();
+//								break;
+//								case 1:
+//									Jk516save .Set_Data.trip=0;
+//									ButtonSound();
+//									break;
+//								case 2:
+//									Jk516save .Set_Data.speed=0;
+//									ButtonSound();
+//									break;
+//								case 3:
+//									Jk516save .Set_Data.Res_comp=0;
+//									ButtonSound();
+//									break;
+//								case 4:
+//									break;
+//								case 5:
+//									Jk516save .Set_Data.V_comp=0;
+//									ButtonSound();
+//									break;
+//								case 6:
+//									break;
+//								case 7:
+//									Jk516save.Set_Data.Range_Set=0;
+//									Jk516save.Set_Data.Range=0;//自动
+//									ButtonSound();
+//									break;
+//								case 8:
+//									Jk516save .Set_Data.beep=0;
+//									ButtonSound();
+//									break;
+//								case 9:
+//									break;
+//								case 10:
+//									break;
+//								case 11:
+//									break;
+//								case 12:
+//									break;
+//								
+//								default :
+//									break;
+//								
+//							}
+//							break;
+//						case 1:
+//							switch(keynum)
+//							{
+//								case 0:
+//									//SetSystemStatus(SYS_STATUS_TEST);
+//								break;
+//								case 1:
+//									Jk516save .Set_Data.trip=1;
+//									ButtonSound();
+//									break;
+//								case 2:
+//									//Jk516save .Set_Data.speed=1;
+//									break;
+//								case 3:
+//									Jk516save .Set_Data.Res_comp=1;
+//									ButtonSound();
+//									break;
+//								case 4:
+//									break;
+//								case 5:
+//									Jk516save .Set_Data.V_comp=1;
+//									ButtonSound();
+//									break;
+//								case 6:
+//									break;
+//								case 7:
+//									Jk516save.Set_Data.Range_Set=1;
+//									ButtonSound();
+//									break;
+//								case 8:
+//									Jk516save .Set_Data.beep=1;
+//									ButtonSound();
+//									break;
+//								case 9:
+//									break;
+//								case 10:
+//									break;
+//								case 11:
+//									break;
+//								case 12:
+//									break;
+//								
+//								default :
+//									break;
+//								
+//							}
+//							break;
+//							
+//						case 2:
+//							switch(keynum)
+//							{
+//								case 0:
+//									SetSystemStatus(SYS_STATUS_SYSSET);
+//									ButtonSound();
+//								break;
+//								case 1:
+//									//Jk516save .Set_Data.trip=0;
+//									break;
+//								case 2:
+//									//Jk516save .Set_Data.trip=0;
+//									break;
+//								case 3:
+//									break;
+//								case 4:
+//									break;
+//								case 5:
+//									break;
+//								case 6:
+//									break;
+//								case 7:
+//									Jk516save.Set_Data.Range_Set=2;//增加档位选择的计算
+//									Range=Jisuan_Range(Jk516save.Set_Data.Nominal_Res);
+//									Jk516save.Set_Data.Range=Range;
+//									Range_Control(Range);
+//									ButtonSound();
+//									break;
+//								case 8:
+//									Jk516save .Set_Data.beep=2;
+//									ButtonSound();
+//									break;
+//								case 9:
+//									break;
+//								case 10:
+//									break;
+//								case 11:
+//									break;
+//								case 12:
+//									break;
+//								
+//								default :
+//									break;
+//								
+//							}
+//							break;
+//							//SetSystemStatus();
+//							
+//						case 3:
+//							switch(keynum)
+//							{
+//								case 0:
+//									SetSystemStatus(SYS_STATUS_SYS);
+//									ButtonSound();
+//								break;
+//								case 1:
+//									//Jk516save .Set_Data.trip=0;
+//									break;
+//								case 2:
+//									//Jk516save .Set_Data.trip=0;
+//									break;
+//								case 3:
+//									break;
+//								case 4:
+//									break;
+//								case 5:
+//									break;
+//								case 6:
+//									break;
+//								case 7:
+//									Jk516save.Set_Data.Range_Set=1;
+//									if(Jk516save.Set_Data.Range<RANGE_MAX)
+//										Jk516save.Set_Data.Range++;
+//									else
+//										Jk516save.Set_Data.Range=0;
+//									Range=Jk516save.Set_Data.Range;
+//									ButtonSound();
+//									break;
+//								case 8:
+//									break;
+//								case 9:
+//									break;
+//								case 10:
+//									break;
+//								case 11:
+//									break;
+//								case 12:
+//									break;
+//								
+//								default :
+//									break;
+//								
+//							}
+//							break;
+//							//SetSystemStatus();
+//							
+//						case 4:
+//							switch(keynum)
+//							{
+//								case 0:
+//									//SetSystemStatus(SYS_STATUS_TEST);
+//								break;
+//								case 1:
+//									//Jk516save .Set_Data.trip=0;
+//									break;
+//								case 2:
+//									//Jk516save .Set_Data.trip=0;
+//									break;
+//								case 3:
+//									break;
+//								case 4:
+//									break;
+//								case 5:
+//									break;
+//								case 6:
+//									break;
+//								case 7:
+//									Jk516save.Set_Data.Range_Set=1;
+//									if(Jk516save.Set_Data.Range<RANGE_MAX)
+//										Jk516save.Set_Data.Range++;
+//									else
+//										Jk516save.Set_Data.Range=0;
+//									Range=Jk516save.Set_Data.Range;
+//									ButtonSound();
+//									break;
+//								case 8:
+//									break;
+//								case 9:
+//									break;
+//								case 10:
+//									break;
+//								case 11:
+//									break;
+//								case 12:
+//									break;
+//								
+//								default :
+//									break;
+//								
+//							}
+//							break;
+//						case 5:
+//							keynum=1;
+//							ButtonSound();
+//							break;
+//						case 6:
+//							keynum=2;
+//							ButtonSound();
+//							break;
+//						case 7:
+//							//keynum=3;
+//							break;
+//						case 8:
+//							keynum=3;
+//							ButtonSound();
+//							break;
+//						case 9://弹出数字框
+//							keynum=4;
+//							ButtonSound();
+//							break;
+//						case 10:
+//							//keynum=5;
+//							break;
+//						case 11:
+//							keynum=5;
+//							ButtonSound();
+//							break;
+//						case 12:
+//							keynum=6;
+//							ButtonSound();
+//							break;
+//						case 13:
+//							keynum=7;
+//							ButtonSound();
+//							break;
+//						
+//						case 14:
+//							keynum=8;
+//							ButtonSound();
+//							break;
+//						case 15:
+//							break;
+//						case 16:
+//							keynum=9;
+//							ButtonSound();
+//							break;
+//						case 17:
+//							keynum=10;
+//							ButtonSound();
+//							break;
+//						case 18:
+//							break;
+//						case 19:
+//							keynum=11;
+//							ButtonSound();
+//							break;
+//						case 20:
+//							keynum=12;
+//							ButtonSound();
+//							break;
+//						default:
+//							break;
+//					
+//					
+//					}
+//			}
+//		
+//		}
         key=Key_Read_WithTimeOut(TICKS_PER_SEC_SOFTTIMER/10);
         if(key!=KEY_NONE)
 		{	Disp_Flag=1;
@@ -1649,7 +1648,7 @@ void Test_Process(void)
 				   }
 				   else
 				   {
-				   
+					 
 				   }
 			 	   if(Jk516save.Set_Data.Range_Set!=1)
 				   Range_Control(Range);
@@ -1976,49 +1975,49 @@ void Test_Process(void)
 //		}
              
 		Uart_Process();//串口处理
-		tp_dev.scan(0); 		 
-		if(tp_dev.sta&TP_PRES_DOWN)			//触摸屏被按下
-		{
-			if(tp_dev.x[0]<640&&tp_dev.y[0]<480)
-			{	
-				
-				for(i=0;i<5;i++)
-				{
-					if((tp_dev.x[0]>(24+BUTTON_W*i))&&(tp_dev.x[0]<(24+BUTTON_W*(i+1)))&&(tp_dev.y[0]>BUTTON_1))
-						touch_value=i;
-					else
-						touch_value=0xff;
-					
-					switch(touch_value)
-					{
-						case 0:
-							break;
-						case 1:
-							SetSystemStatus(SYS_STATUS_SETUP);
-							ButtonSound();
-							break;
-						case 2:
-							SetSystemStatus(SYS_STATUS_SYSSET);
-							ButtonSound();
-							break;
-						case 3:
-							SetSystemStatus(SYS_STATUS_SYS);
-							ButtonSound();
-							break;
-						case 4:
-                            SetSystemStatus(SYS_STATUS_CLEAR);
-							ButtonSound();
-							break;
-						default:
-							break;
-					
-					
-					}
-				}
-				
-			}
-		
-		}
+//		tp_dev.scan(0); 		 
+//		if(tp_dev.sta&TP_PRES_DOWN)			//触摸屏被按下
+//		{
+//			if(tp_dev.x[0]<640&&tp_dev.y[0]<480)
+//			{	
+//				
+//				for(i=0;i<5;i++)
+//				{
+//					if((tp_dev.x[0]>(24+BUTTON_W*i))&&(tp_dev.x[0]<(24+BUTTON_W*(i+1)))&&(tp_dev.y[0]>BUTTON_1))
+//						touch_value=i;
+//					else
+//						touch_value=0xff;
+//					
+//					switch(touch_value)
+//					{
+//						case 0:
+//							break;
+//						case 1:
+//							SetSystemStatus(SYS_STATUS_SETUP);
+//							ButtonSound();
+//							break;
+//						case 2:
+//							SetSystemStatus(SYS_STATUS_SYSSET);
+//							ButtonSound();
+//							break;
+//						case 3:
+//							SetSystemStatus(SYS_STATUS_SYS);
+//							ButtonSound();
+//							break;
+//						case 4:
+//                            SetSystemStatus(SYS_STATUS_CLEAR);
+//							ButtonSound();
+//							break;
+//						default:
+//							break;
+//					
+//					
+//					}
+//				}
+//				
+//			}
+//		
+//		}
         if(Keyboard.state == TRUE)
         {
             Disp_Flag=1;
@@ -2891,48 +2890,48 @@ void Use_SysSetProcess(void)
 			Disp_flag=0;
             
 		}
-		tp_dev.scan(0); 		 
-		if(tp_dev.sta&TP_PRES_DOWN)			//触摸屏被按下
-		{
-			if(tp_dev.x[0]<640&&tp_dev.y[0]<480)
-			{	
-				
-				for(i=0;i<5;i++)
-				{
-					if((tp_dev.x[0]>(24+BUTTON_W*i))&&(tp_dev.x[0]<(24+BUTTON_W*(i+1)))&&(tp_dev.y[0]>BUTTON_1))
-						touch_value=i;
-					else
-						touch_value=0xff;
-				
-					switch(touch_value)
-					{
-						case 0:
-							SetSystemStatus(SYS_STATUS_TEST);
-							ButtonSound();
-							break;
-						case 1:
-							SetSystemStatus(SYS_STATUS_SETUP);
-							ButtonSound();
-							break;
-						case 2:
-							//SetSystemStatus(SYS_STATUS_SYSSET);
-							break;
-						case 3:
-							SetSystemStatus(SYS_STATUS_SYS);
-							ButtonSound();
-							break;
-						case 4:
-							break;
-						default:
-							break;
-					
-					
-					}
-				}
-				
-			}
-		
-		}
+//		tp_dev.scan(0); 		 
+//		if(tp_dev.sta&TP_PRES_DOWN)			//触摸屏被按下
+//		{
+//			if(tp_dev.x[0]<640&&tp_dev.y[0]<480)
+//			{	
+//				
+//				for(i=0;i<5;i++)
+//				{
+//					if((tp_dev.x[0]>(24+BUTTON_W*i))&&(tp_dev.x[0]<(24+BUTTON_W*(i+1)))&&(tp_dev.y[0]>BUTTON_1))
+//						touch_value=i;
+//					else
+//						touch_value=0xff;
+//				
+//					switch(touch_value)
+//					{
+//						case 0:
+//							SetSystemStatus(SYS_STATUS_TEST);
+//							ButtonSound();
+//							break;
+//						case 1:
+//							SetSystemStatus(SYS_STATUS_SETUP);
+//							ButtonSound();
+//							break;
+//						case 2:
+//							//SetSystemStatus(SYS_STATUS_SYSSET);
+//							break;
+//						case 3:
+//							SetSystemStatus(SYS_STATUS_SYS);
+//							ButtonSound();
+//							break;
+//						case 4:
+//							break;
+//						default:
+//							break;
+//					
+//					
+//					}
+//				}
+//				
+//			}
+//		
+//		}
 		key=Key_Read_WithTimeOut(TICKS_PER_SEC_SOFTTIMER/10);
         RTC_GetTime(RTC_Format_BIN, &RTC_TimeStructure);
         RTC_GetDate(RTC_Format_BIN, &RTC_DateStructure);
@@ -3388,49 +3387,49 @@ void Sys_Process(void)
 			Disp_Sys();
 			Disp_flag=0;	
 		}
-		tp_dev.scan(0); 		 
-		if(tp_dev.sta&TP_PRES_DOWN)			//触摸屏被按下
-		{
-			
-			if(tp_dev.x[0]<640&&tp_dev.y[0]<480)
-			{	
+//		tp_dev.scan(0); 		 
+//		if(tp_dev.sta&TP_PRES_DOWN)			//触摸屏被按下
+//		{
+//			
+//			if(tp_dev.x[0]<640&&tp_dev.y[0]<480)
+//			{	
 
-				for(i=0;i<5;i++)
-				{
-					if((tp_dev.x[0]>(24+BUTTON_W*i))&&(tp_dev.x[0]<(24+BUTTON_W*(i+1)))&&(tp_dev.y[0]>BUTTON_1))
-						touch_value=i;
-					else
-						touch_value=0xff;
-				
-					switch(touch_value)
-					{
-						case 0:
-							SetSystemStatus(SYS_STATUS_TEST);
-							ButtonSound();
-							break;
-						case 1:
-							SetSystemStatus(SYS_STATUS_SETUP);
-							ButtonSound();
-							break;
-						case 2:
-							SetSystemStatus(SYS_STATUS_SYSSET);
-							ButtonSound();
-							break;
-						case 3:
-							
-							break;
-						case 4:
-							break;
-						default:
-							break;
-					
-					
-					}
-				}
-				
-			}
-		
-		}
+//				for(i=0;i<5;i++)
+//				{
+//					if((tp_dev.x[0]>(24+BUTTON_W*i))&&(tp_dev.x[0]<(24+BUTTON_W*(i+1)))&&(tp_dev.y[0]>BUTTON_1))
+//						touch_value=i;
+//					else
+//						touch_value=0xff;
+//				
+//					switch(touch_value)
+//					{
+//						case 0:
+//							SetSystemStatus(SYS_STATUS_TEST);
+//							ButtonSound();
+//							break;
+//						case 1:
+//							SetSystemStatus(SYS_STATUS_SETUP);
+//							ButtonSound();
+//							break;
+//						case 2:
+//							SetSystemStatus(SYS_STATUS_SYSSET);
+//							ButtonSound();
+//							break;
+//						case 3:
+//							
+//							break;
+//						case 4:
+//							break;
+//						default:
+//							break;
+//					
+//					
+//					}
+//				}
+//				
+//			}
+//		
+//		}
 		key=Key_Read_WithTimeOut(TICKS_PER_SEC_SOFTTIMER/10);
 		if(key!=KEY_NONE)
 		{
