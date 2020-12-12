@@ -158,7 +158,7 @@ u32 Read_Convert_read(void)
 {
     u32 temp=0;
 	
-    delay_1us(120);
+    delay_1us(150);
     temp=SpiRxByte(1);
     temp<<=8;
     temp|=SpiRxByte(1);
