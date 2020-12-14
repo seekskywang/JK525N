@@ -3,7 +3,7 @@
 <title>Static Call Graph - [..\..\Output\Template.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image ..\..\Output\Template.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Sat Dec 12 16:27:20 2020
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Mon Dec 14 15:14:01 2020
 <BR><P>
 <H3>Maximum Stack Usage =        592 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -1644,6 +1644,7 @@ Global Symbols
 <P><STRONG><a name="[10b]"></a>GPIO_ReadInputDataBit</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, stm32f4xx_gpio.o(i.GPIO_ReadInputDataBit))
 <BR><BR>[Called By]<UL><LI><a href="#[33]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI3_IRQHandler
 <LI><a href="#[1e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Test_Process
+<LI><a href="#[1b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Read_Openflag
 <LI><a href="#[17c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PowerOffDetect
 <LI><a href="#[1ee]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_adV_one
 <LI><a href="#[d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_adV_1
@@ -1655,7 +1656,6 @@ Global Symbols
 <LI><a href="#[108]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DispBattery
 <LI><a href="#[b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Query376Interrupt
 <LI><a href="#[14f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Key_Identiry
-<LI><a href="#[1b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Read_Openflag
 <LI><a href="#[1b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SpiRxByte
 </UL>
 
@@ -2550,7 +2550,8 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[10b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_ReadInputDataBit
 </UL>
-<BR>[Called By]<UL><LI><a href="#[1eb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_cpld
+<BR>[Called By]<UL><LI><a href="#[1e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Test_Process
+<LI><a href="#[1eb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_cpld
 </UL>
 
 <P><STRONG><a name="[1b7]"></a>Read_cal_flash</STRONG> (Thumb, 16 bytes, Stack size 4 bytes, test.o(i.Read_cal_flash))
@@ -2926,7 +2927,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[1e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Test_Process
 </UL>
 
-<P><STRONG><a name="[1e9]"></a>Test_Process</STRONG> (Thumb, 5386 bytes, Stack size 216 bytes, test.o(i.Test_Process))
+<P><STRONG><a name="[1e9]"></a>Test_Process</STRONG> (Thumb, 5314 bytes, Stack size 216 bytes, test.o(i.Test_Process))
 <BR><BR>[Stack]<UL><LI>Max Depth = 592<LI>Call Chain = Test_Process &rArr; R_Comp &rArr; __hardfp_pow &rArr; __kernel_poly &rArr; __aeabi_dmul &rArr; _double_epilogue &rArr; _double_round
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_ResetBits
@@ -2934,6 +2935,7 @@ Global Symbols
 <LI><a href="#[d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_us
 <LI><a href="#[1eb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_cpld
 <LI><a href="#[d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Select_V_I
+<LI><a href="#[1b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Read_Openflag
 <LI><a href="#[196]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Led_Pass_On
 <LI><a href="#[197]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Led_Fail_On
 <LI><a href="#[158]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LCD_Clear
@@ -3986,7 +3988,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[1e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Test_Process
 </UL>
 
-<P><STRONG><a name="[d3]"></a>read_adI_4</STRONG> (Thumb, 176 bytes, Stack size 8 bytes, user.o(i.read_adI_4))
+<P><STRONG><a name="[d3]"></a>read_adI_4</STRONG> (Thumb, 164 bytes, Stack size 8 bytes, user.o(i.read_adI_4))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = read_adI_4 &rArr; Read_Convert_read &rArr; SpiRxByte
 </UL>
 <BR>[Calls]<UL><LI><a href="#[10b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_ReadInputDataBit

@@ -29,7 +29,7 @@ int main(void)
 				case SYS_STATUS_SYSSET : //系统设置
 							Use_SysSetProcess();
 				break;
-				case SYS_STATUS_DEBUG:
+				case SYS_STATUS_DEBUG:	
 							Use_DebugProcess();//调试处理
 				break;
 				case SYS_STATUS_RESET:

@@ -411,7 +411,7 @@ void Power_Process(void)
 	
 	
 	Parameter_valuecomp();//比较读出的数据
-    open_flag=1;
+    open_flag=0;
     Range=Jk516save.Set_Data.Range;
     Range_Control(Range);
     RangeChange_Flag=1;
@@ -1323,7 +1323,7 @@ void Test_Process(void)
     open_flag = 0;    
     V_Range = Jisuan_V_Range(Jk516save.Set_Data.Nominal_V);
     Range_Control(Range);	
-    open_flag = 1; 
+    open_flag = 0; 
     Select_V_I(1);
     delay_us(120);
     i=0;
@@ -1375,7 +1375,9 @@ void Test_Process(void)
 					MODS_03H();
 					UsbHidReceiveComplete=0;
 			}
-      OpenRangflag=read_cpld();//判断是否开路  
+      OpenRangflag=read_cpld();//判断是否开路 
+	  OpenRangflag = 1;
+	  open_flag = Read_Openflag();
       if(OpenRangflag)
       {
             ry_flag++;
@@ -1388,7 +1390,7 @@ void Test_Process(void)
             
         if(Jk516save.Set_Data.trip==0)
             test_start=1;
-        if(open_flag==0)//不开路
+        if(open_flag==1)//不开路
         {
             if(test_start==1)
             {
@@ -1689,7 +1691,7 @@ void Test_Process(void)
                if(disp_I>3800)
                {
                    i=0;
-                   open_flag=1;
+                   open_flag=0;
            
                     Disp_Open();
          
@@ -1723,7 +1725,7 @@ void Test_Process(void)
 //                Res_count.r=I_ad;
                 Test_Debug();//校正
 //                I_ad=Res_count.r;
-                if(open_flag==0)
+                if(open_flag==1)
                 {
                     
                     if(RangeChange_Flag)
@@ -1740,7 +1742,7 @@ void Test_Process(void)
                         Test_Value_V=V_Datacov(disp_V ,V_Range);//把数据的小数点和单位 和极性都加上
 						if(V_Range == 1 && Test_Value_V.res > 60000)
 						{
-							open_flag=1;
+							open_flag=0;
 							Disp_Open();
 						}else{
 							
@@ -3639,7 +3641,7 @@ static uint8_t MODS_ReadRegValue(uint16_t reg_addr, uint8_t *reg_value)
 		
 	}
 	sendvvalue = Test_Value_V.res*10;
-	if(open_flag == 1)
+	if(open_flag == 0)
 	{
 		sendrvalue = 0xffffffff;	
 		sendvvalue = 0xffffffff;
