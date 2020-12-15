@@ -1323,7 +1323,7 @@ void Test_Process(void)
     open_flag = 0;    
     V_Range = Jisuan_V_Range(Jk516save.Set_Data.Nominal_V);
     Range_Control(Range);	
-    open_flag = 0; 
+    open_flag = 1; 
     Select_V_I(1);
     delay_us(120);
     i=0;
@@ -1390,7 +1390,7 @@ void Test_Process(void)
             
         if(Jk516save.Set_Data.trip==0)
             test_start=1;
-        if(open_flag==1)//不开路
+        if(open_flag==0)//不开路
         {
             if(test_start==1)
             {
@@ -1691,7 +1691,7 @@ void Test_Process(void)
                if(disp_I>3800)
                {
                    i=0;
-                   open_flag=0;
+                   open_flag=1;
            
                     Disp_Open();
          
@@ -1725,7 +1725,7 @@ void Test_Process(void)
 //                Res_count.r=I_ad;
                 Test_Debug();//校正
 //                I_ad=Res_count.r;
-                if(open_flag==1)
+                if(open_flag==0)
                 {
                     
                     if(RangeChange_Flag)
@@ -1742,7 +1742,7 @@ void Test_Process(void)
                         Test_Value_V=V_Datacov(disp_V ,V_Range);//把数据的小数点和单位 和极性都加上
 						if(V_Range == 1 && Test_Value_V.res > 60000)
 						{
-							open_flag=0;
+							open_flag=1;
 							Disp_Open();
 						}else{
 							
@@ -2671,7 +2671,7 @@ void Use_DebugProcess(void)
 				case Key_UP:
                     if(test_start==0)
                         {
-                    open_flag=0;
+                    open_flag=1;
                     
                     if(test_start==0)
                     {
@@ -2703,7 +2703,7 @@ void Use_DebugProcess(void)
 				case Key_DOWN:
                     if(test_start==0)
                     {
-                        open_flag=0;
+                        open_flag=1;
                         if(list<DEBUG_RANGE)
                             list++;
                         else
