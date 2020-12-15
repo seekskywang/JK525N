@@ -2638,6 +2638,7 @@ void Use_DebugProcess(void)
                          LCD_Clear(LCD_COLOR_TEST_BACK);
                         Disp_UserCheck_Item();
                     
+						
                     }
 				break;
 				case Key_Disp:

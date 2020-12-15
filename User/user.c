@@ -350,7 +350,7 @@ const uint8_t BiasButton_Tip[][7+1]=  //频率选择时候的下面的提示符号
 const uint8_t Sys_Sys[][20+1]=
 {
 	{"仪器型号:  JK625  "},
-	{"软件版本:  Ver:1.7"},
+	{"软件版本:  Ver:1.8"},
 	{"硬件版本:  Ver:1.0"},
 	{"仪器编号:"},
 
@@ -361,7 +361,7 @@ const uint8_t Sys_Sys[][20+1]=
 const uint8_t Sys_Sys_E[][20+1]=
 {
 	{"INST MODEL:  JK625 "},
-	{"SOFT VER:   Ver:1.7"},
+	{"SOFT VER:   Ver:1.8"},
 	{"HARD VER:   Ver:1.0"},
 	{"SERIALNO:"},	
 

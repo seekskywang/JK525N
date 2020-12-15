@@ -69,8 +69,6 @@
 "..\..\output\flash_if.o"
 "..\..\output\bsp_internalflash.o"
 "..\..\output\diskio.o"
-"..\..\output\ff.o"
-"..\..\output\cc936.o"
 "..\..\output\filesys.o"
 "..\..\output\usb_core.o"
 "..\..\output\usb_dcd.o"
