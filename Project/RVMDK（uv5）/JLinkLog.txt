@@ -4540,3 +4540,6 @@ T1FD0 24699:027 JLINK_ReadMemEx(0x0000006C, 0x003C Bytes, ..., Flags = 0x0200000
 T1FD0 24699:030 JLINK_ReadMemEx(0x0000006E, 0x0002 Bytes, ..., Flags = 0x02000000) -- CPU_ReadMem(2 bytes @ 0x0800006E) - Data: AA AA  returns 0xFFFFFFFF (0002ms, 174359ms total)
 T1FD0 24699:032 JLINK_ReadMemEx(0x0000006E, 0x0002 Bytes, ..., Flags = 0x02000000) -- CPU_ReadMem(2 bytes @ 0x0800006E) - Data: AA AA  returns 0xFFFFFFFF (0002ms, 174361ms total)
 T1FD0 24699:034 JLINK_ReadMemEx(0x0000006E, 0x0002 Bytes, ..., Flags = 0x02000000) -- CPU_ReadMem(2 bytes @ 0x0800006E) - Data: AA AA  returns 0xFFFFFFFF (0002ms, 174363ms total)
+T1FD0 25473:937 JLINK_Close() -- CPU is running -- CPU_WriteMem(4 bytes @ 0xE0002008) -- CPU is running -- CPU_WriteMem(4 bytes @ 0xE000200C) -- CPU is running -- CPU_WriteMem(4 bytes @ 0xE0002010) -- CPU is running -- CPU_WriteMem(4 bytes @ 0xE0002014) -- CPU is running -- CPU_WriteMem(4 bytes @ 0xE0002018) -- CPU is running -- CPU_WriteMem(4 bytes @ 0xE000201C) >0x0D TIF> >0x0D TIF> >0x0D TIF> >0x0D TIF> >0x0D TIF> >0x0D TIF> >0x0D TIF> >0x0D TIF> >0x0D TIF> >0x0D TIF> (0032ms, 174395ms total)
+T1FD0 25473:937  (0032ms, 174395ms total)
+T1FD0 25473:937 Closed (0032ms, 174395ms total)

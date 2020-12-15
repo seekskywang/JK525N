@@ -3642,7 +3642,7 @@ static uint8_t MODS_ReadRegValue(uint16_t reg_addr, uint8_t *reg_value)
 		
 	}
 	sendvvalue = Test_Value_V.res*10;
-	if(open_flag == 0)
+	if(open_flag == 1)
 	{
 		sendrvalue = 0xffffffff;	
 		sendvvalue = 0xffffffff;
