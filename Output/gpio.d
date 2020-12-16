@@ -66,3 +66,4 @@
 ..\..\output\gpio.o: ..\..\User\spi.h
 ..\..\output\gpio.o: ..\..\User\bsp_exti.h
 ..\..\output\gpio.o: ..\..\HARDWARE\cpld.h
+..\..\output\gpio.o: ..\..\User\sdio/bsp_sdio_sd.h

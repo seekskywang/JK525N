@@ -371,6 +371,7 @@ enum SysStatusEnum
     SYS_STATUS_CLEAR,
     SYS_STATUS_SETUP,
     SYS_STATUS_DEBUG,
+	SYS_STATUS_SDFILE,
 };
 
 //==========================================================

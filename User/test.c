@@ -423,7 +423,7 @@ void Power_Process(void)
 				i++;
 				j++;
 				if( i > POWERON_DISP_TIME )//延时20*100mS=2s后自动退出
-							SetSystemStatus(SYS_STATUS_TEST);//待测状态
+							SetSystemStatus(SYS_STATUS_SETUP);//待测状态
 				delay_ms(100);
 				key=Key_Read_WithTimeOut(TICKS_PER_SEC_SOFTTIMER/10);//等待按键(100*10ms/10=100ms)
 				if(key!=KEY_NONE)
@@ -508,17 +508,31 @@ void Power_Process(void)
 }
 
 //==========================================================
-//函数名称：Idle_Process
-//函数功能：待测主程序
+//函数名称：SD_Process
+//函数功能：读取查看SD卡数据
 //入口参数：无
 //出口参数：无
 //创建日期：2015.10.26
 //修改日期：2015.10.26 08:59
 //备注说明：无
 //==========================================================
+void SD_Process(void)
+{
+	u8 keynum=0,i;
+	
+	Disp_Coordinates_Typedef  Coordinates;
+//	Send_Ord_Typedef Uart;
+	
+	vu8 key=0;
+	vu8 Disp_Flag=1;
+	keynum=0;
+	LCD_Clear(LCD_COLOR_TEST_BACK);
+	
+	
+	
+}
 
-
-
+                                                                                                                                                                                              
 //==========================================================
 //函数名称：Setup_Process
 //函数功能：设置程序

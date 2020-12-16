@@ -1,6 +1,6 @@
 #include "pbdata.h"
 #include "cpld.h"
-
+#include "sdio/bsp_sdio_sd.h"
 //#define BEEP GPIO_SetBits()
 void PLC_GPIO_Configuration(void)
 {
@@ -191,7 +191,7 @@ void GPIO_Configuration(void)
     PLC_GPIO_Configuration();//PLC¿ØÖÆÐÅºÅ
 	CH376_GPIO_Init();//
     //V_I_Select_Configuration();
-    
+    SD_Init();
 
 	
 	

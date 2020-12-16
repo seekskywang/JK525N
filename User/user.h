@@ -146,6 +146,7 @@ u8 Comp_choice(void);
 void Beep_Out(u8 flag);
 void lvbo_jisu(void);
 void Soft_Turnon(void);
+void SD_Process(void);
 void VRange_Changecomp(void);
 u8 read_adI_4(void);
 u8 read_adV_4(void);

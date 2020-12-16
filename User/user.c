@@ -1864,8 +1864,8 @@ void Disp_Button_value1( uint32_t value )
 						WriteString_16(25, BUTTON_2, "DISP",  0);
 						WriteString_16(25 + BUTTON_W, BUTTON_1+5, "MEAS",  0);
 						WriteString_16(25 + BUTTON_W, BUTTON_2, "SETUP",  0);
-						WriteString_16(25 + BUTTON_W*2, BUTTON_1+5, " SYS",  0);
-						WriteString_16(25 + BUTTON_W*2, BUTTON_2, "SETUP",  0);
+						WriteString_16(25 + BUTTON_W*2, BUTTON_1+5, "DATA",  0);
+						WriteString_16(25 + BUTTON_W*2, BUTTON_2, "REVIEW",  0);
 						WriteString_16(25 + BUTTON_W*3, BUTTON_1+5, "SYS",  0);
 						WriteString_16(25 + BUTTON_W*3, BUTTON_2, "INFO",  0);
 						
@@ -1884,8 +1884,8 @@ void Disp_Button_value1( uint32_t value )
 						WriteString_16(24, BUTTON_2, "显 示",  0);
 						WriteString_16(24 + BUTTON_W, BUTTON_1+5, "测 量",  0);
 						WriteString_16(24 + BUTTON_W, BUTTON_2, "设 置",  0);
-						WriteString_16(24 + BUTTON_W*2, BUTTON_1+5, "系 统",  0);
-						WriteString_16(24 + BUTTON_W*2, BUTTON_2, "设 置",  0);
+						WriteString_16(24 + BUTTON_W*2, BUTTON_1+5, "数 据",  0);
+						WriteString_16(24 + BUTTON_W*2, BUTTON_2, "查 看",  0);
 						WriteString_16(24 + BUTTON_W*3, BUTTON_1+5, "系 统",  0);
 						WriteString_16(24 + BUTTON_W*3, BUTTON_2, "信 息",  0);
 					

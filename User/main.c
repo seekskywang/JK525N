@@ -40,10 +40,14 @@ int main(void)
 				break;
 				case SYS_STATUS_CLEAR:
 							Clear_Process();
-        break;
+				break;
 				case SYS_STATUS_TOOL://工具
 							Soft_Turnon();
-			  break;
+			    break;
+				case SYS_STATUS_SDFILE:
+					
+					SD_Process();
+				break;
 				default:
 //				Disp_Clr( );//清屏
 				//Error_Process();//错误处理
