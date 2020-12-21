@@ -120,6 +120,7 @@ u8 usbstatus = UNKNOWN;
 u8 usbbuf[0x40];
 u8 send_usbbuf[0x40];
 u8 powerstat;
+u8 sdstatus;
 #ifdef USB_OTG_HS_INTERNAL_DMA_ENABLED
   #if defined ( __ICCARM__ ) /*!< IAR Compiler */
     #pragma data_alignment=4   
@@ -519,7 +520,7 @@ void Power_Process(void)
 void SD_Process(void)
 {
 	u8 keynum=0,i;
-	
+	static vu32 uwatch;
 	Disp_Coordinates_Typedef  Coordinates;
 //	Send_Ord_Typedef Uart;
 	
@@ -527,7 +528,24 @@ void SD_Process(void)
 	vu8 Disp_Flag=1;
 	keynum=0;
 	LCD_Clear(LCD_COLOR_TEST_BACK);
-	
+	Disp_SD_VIEW_Item();
+	while(GetSystemStatus()==SYS_STATUS_SDFILE)
+	{
+		uwatch = sizeof(Send_To_U);
+		powerstat = PowerOffDetect();
+		if(powerstat == 0)
+		{
+			PowerOffHandle();
+		}
+		if(Disp_Flag==1)
+		{
+			
+//			DispSet_value(keynum);
+           
+			Disp_Flag=0;
+		
+		}
+	}
 	
 	
 }
@@ -1134,7 +1152,7 @@ void Setup_Process(void)
 					switch(keynum)
 					{
 						case 0:
-								SetSystemStatus(SYS_STATUS_SYS);
+								SetSystemStatus(SYS_STATUS_SDFILE);
 							break;
 						case 1:
                             //Jk516save.Set_Data.trip=3;//¼«ËÙ
@@ -1308,7 +1326,7 @@ void Setup_Process(void)
 //==========================================================
 void Test_Process(void)
 {
-		vu8 key;
+	vu8 key;
     vu16 USB_Count = 0;
     UINT fnum;
     vu8 test_Vsorting,test_Rsorting;
@@ -1342,9 +1360,13 @@ void Test_Process(void)
     delay_us(120);
     i=0;
     range_over=0;
-		V_Range=1;
+	V_Range=1;
 		while(GetSystemStatus()==SYS_STATUS_TEST)
 		{
+			if(sdstatus == 0)
+			{
+				sdstatus = SD_Init();
+			}
 			if(GPIO_ReadInputDataBit( GPIOE,  GPIO_Pin_3)==0)
 			{
 				delay_ms(100);
@@ -1929,6 +1951,10 @@ void Test_Process(void)
 									fileflag = 0;
 									Disp_usbflag=0;
 								}
+							}
+							if(sdstatus == 1)
+							{
+								
 							}
 							
 						}

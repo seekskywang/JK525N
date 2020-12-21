@@ -37,6 +37,7 @@ void Feedback_RY(u8 dat);
 void Power_Process(void);
 void Idle_Process(void);
 void Setup_Process(void);
+void SD_Process(void);
 void Test_Process(void);
 void TestAbort_Process(void);
 void TestFinish_Process(void);

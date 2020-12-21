@@ -27,35 +27,151 @@ Project File Date:  12/15/2020
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 6 (build 750)', folder: 'D:\Keil_v5\ARM\ARMCC\Bin'
 Build target '工程模板'
+compiling main.c...
+compiling stm32f4xx_it.c...
+compiling pbdata.c...
+compiling user.c...
+..\..\User\user.c(1107): warning:  #188-D: enumerated type mixed with another type
+        bool f_upper=FALSE;//量程过压标志
+..\..\User\user.c(1108): warning:  #188-D: enumerated type mixed with another type
+        bool f_below=FALSE;//量程欠压标志
+..\..\User\user.c(1109): warning:  #188-D: enumerated type mixed with another type
+        bool f_switch=FALSE;//量程切换标志
+..\..\User\user.c(1110): warning:  #188-D: enumerated type mixed with another type
+      bool V_upper=FALSE;//量程过压标志
+..\..\User\user.c(1111): warning:  #188-D: enumerated type mixed with another type
+        bool V_below=FALSE;//量程欠压标志
+..\..\User\user.c(1112): warning:  #188-D: enumerated type mixed with another type
+        bool V_switch=FALSE;//量程切换标志
+..\..\User\user.c(1117): warning:  #188-D: enumerated type mixed with another type
+                f_upper=TRUE;//量程过压标志
+..\..\User\user.c(1118): warning:  #188-D: enumerated type mixed with another type
+                f_below=FALSE;//量程欠压标志
+..\..\User\user.c(1126): warning:  #188-D: enumerated type mixed with another type
+                f_below=TRUE;//量程低压标志
+..\..\User\user.c(1127): warning:  #188-D: enumerated type mixed with another type
+                f_upper=FALSE;//量程欠压标志
+..\..\User\user.c(1131): warning:  #188-D: enumerated type mixed with another type
+                f_upper=FALSE;//量程过压标志
+..\..\User\user.c(1132): warning:  #188-D: enumerated type mixed with another type
+                f_below=FALSE;//量程欠压标志
+..\..\User\user.c(1134): warning:  #188-D: enumerated type mixed with another type
+        f_switch=FALSE;//量程切换标志
+..\..\User\user.c(1140): warning:  #188-D: enumerated type mixed with another type
+                                f_switch=TRUE;//量程切换标志
+..\..\User\user.c(1150): warning:  #188-D: enumerated type mixed with another type
+                                f_switch=TRUE;//量程切换标志
+..\..\User\user.c(1162): warning:  #188-D: enumerated type mixed with another type
+          f_switch=FALSE;
+..\..\User\user.c(1110): warning:  #177-D: variable "V_upper"  was declared but never referenced
+      bool V_upper=FALSE;//量程过压标志
+..\..\User\user.c(1111): warning:  #177-D: variable "V_below"  was declared but never referenced
+        bool V_below=FALSE;//量程欠压标志
+..\..\User\user.c(1112): warning:  #177-D: variable "V_switch"  was declared but never referenced
+        bool V_switch=FALSE;//量程切换标志
+..\..\User\user.c(1173): warning:  #188-D: enumerated type mixed with another type
+                bool f_upper=FALSE;//量程过压标志
+..\..\User\user.c(1174): warning:  #188-D: enumerated type mixed with another type
+                bool f_below=FALSE;//量程欠压标志
+..\..\User\user.c(1175): warning:  #188-D: enumerated type mixed with another type
+                bool f_switch=FALSE;//量程切换标志
+..\..\User\user.c(1176): warning:  #188-D: enumerated type mixed with another type
+                bool V_upper=FALSE;//量程过压标志
+..\..\User\user.c(1177): warning:  #188-D: enumerated type mixed with another type
+                bool V_below=FALSE;//量程欠压标志
+..\..\User\user.c(1178): warning:  #188-D: enumerated type mixed with another type
+                bool V_switch=FALSE;//量程切换标志
+..\..\User\user.c(1183): warning:  #188-D: enumerated type mixed with another type
+          V_upper=TRUE;  //量程过压标志
+..\..\User\user.c(1184): warning:  #188-D: enumerated type mixed with another type
+          V_below=FALSE; //量程欠压标志       
+..\..\User\user.c(1188): warning:  #188-D: enumerated type mixed with another type
+          V_below=TRUE;  //量程低压标志
+..\..\User\user.c(1189): warning:  #188-D: enumerated type mixed with another type
+          V_upper=FALSE; //量程欠压标志
+..\..\User\user.c(1193): warning:  #188-D: enumerated type mixed with another type
+          V_upper=FALSE; //量程过压标志
+..\..\User\user.c(1194): warning:  #188-D: enumerated type mixed with another type
+          V_below=FALSE; //量程欠压标志
+..\..\User\user.c(1196): warning:  #188-D: enumerated type mixed with another type
+                V_switch=FALSE; //量程切换标志
+..\..\User\user.c(1200): warning:  #188-D: enumerated type mixed with another type
+                        V_switch=TRUE;//量程切换标志
+..\..\User\user.c(1207): warning:  #188-D: enumerated type mixed with another type
+                        V_switch=TRUE;//量程切换标志
+..\..\User\user.c(1173): warning:  #177-D: variable "f_upper"  was declared but never referenced
+                bool f_upper=FALSE;//量程过压标志
+..\..\User\user.c(1174): warning:  #177-D: variable "f_below"  was declared but never referenced
+                bool f_below=FALSE;//量程欠压标志
+..\..\User\user.c(1175): warning:  #177-D: variable "f_switch"  was declared but never referenced
+                bool f_switch=FALSE;//量程切换标志
+..\..\User\user.c(1239): warning:  #177-D: variable "a"  was declared but never referenced
+      float a,b;
+..\..\User\user.c(1239): warning:  #177-D: variable "b"  was declared but never referenced
+      float a,b;
+..\..\User\user.c(1854): warning:  #177-D: variable "i"  was declared but never referenced
+                u8 i;
+..\..\User\user.c(2281): warning:  #177-D: variable "i"  was declared but never referenced
+        uint32_t i;
+..\..\User\user.c(2282): warning:  #177-D: variable "pt"  was declared but never referenced
+      const u8 (*pt)[sizeof(Set_testitem[0])];
+..\..\User\user.c: 42 warnings, 0 errors
 compiling test.c...
-..\..\User\test.c(521): warning:  #550-D: variable "keynum"  was set but never used
+..\..\User\test.c(522): warning:  #550-D: variable "keynum"  was set but never used
         u8 keynum=0,i;
-..\..\User\test.c(521): warning:  #177-D: variable "i"  was declared but never referenced
+..\..\User\test.c(522): warning:  #177-D: variable "i"  was declared but never referenced
         u8 keynum=0,i;
-..\..\User\test.c(548): warning:  #177-D: variable "i"  was declared but never referenced
+..\..\User\test.c(566): warning:  #177-D: variable "i"  was declared but never referenced
         u8 keynum=0,i;
-..\..\User\test.c(1898): warning:  #167-D: argument of type "vu8 *" is incompatible with parameter of type "u8 *"
+..\..\User\test.c(1368): warning:  #223-D: function "SD_Init" declared implicitly
+                                sdstatus = SD_Init();
+..\..\User\test.c(1920): warning:  #167-D: argument of type "vu8 *" is incompatible with parameter of type "u8 *"
                                                                                 result=CH376FileOpenPath(copybuff);
-..\..\User\test.c(1901): warning:  #167-D: argument of type "vu8 *" is incompatible with parameter of type "u8 *"
+..\..\User\test.c(1923): warning:  #167-D: argument of type "vu8 *" is incompatible with parameter of type "u8 *"
                                                                                         result = CH376FileCreatePath(copybuff);
-..\..\User\test.c(1916): warning:  #167-D: argument of type "vu8 *" is incompatible with parameter of type "u8 *"
+..\..\User\test.c(1938): warning:  #167-D: argument of type "vu8 *" is incompatible with parameter of type "u8 *"
                                                                                 result=CH376FileOpenPath(copybuff);
-..\..\User\test.c(1313): warning:  #177-D: variable "fnum"  was declared but never referenced
+..\..\User\test.c(1331): warning:  #177-D: variable "fnum"  was declared but never referenced
       UINT fnum;
-..\..\User\test.c(2520): warning:  #177-D: variable "a"  was declared but never referenced
+..\..\User\test.c(2546): warning:  #177-D: variable "a"  was declared but never referenced
       float a,b;
-..\..\User\test.c(2520): warning:  #177-D: variable "b"  was declared but never referenced
+..\..\User\test.c(2546): warning:  #177-D: variable "b"  was declared but never referenced
       float a,b;
-..\..\User\test.c(2823): warning:  #550-D: variable "range_v"  was set but never used
+..\..\User\test.c(2849): warning:  #550-D: variable "range_v"  was set but never used
       u8 range_v,range;;
-..\..\User\test.c(2825): warning:  #177-D: variable "Clear_num"  was declared but never referenced
+..\..\User\test.c(2851): warning:  #177-D: variable "Clear_num"  was declared but never referenced
       u8 Clear_num=0;
-..\..\User\test.c: 11 warnings, 0 errors
+..\..\User\test.c: 12 warnings, 0 errors
+compiling 4094.C...
+compiling bsp_lcd.c...
+..\..\HARDWARE\lcd\bsp_lcd.c(636): warning:  #177-D: variable "pt1"  was declared but never referenced
+        u32 *pt1;
+..\..\HARDWARE\lcd\bsp_lcd.c(637): warning:  #177-D: variable "pt"  was declared but never referenced
+        u8 *pt;
+..\..\HARDWARE\lcd\bsp_lcd.c(749): warning:  #177-D: variable "usIndex"  was declared but never referenced
+    uint32_t usTemp,usIndex;    
+..\..\HARDWARE\lcd\bsp_lcd.c(807): warning:  #177-D: variable "color"  was declared but never referenced
+        uint32_t color;
+..\..\HARDWARE\lcd\bsp_lcd.c: 4 warnings, 0 errors
+compiling AD7706.C...
+compiling GPIO.C...
+compiling keyboard.c...
+compiling flash_eerom.c...
+..\..\HARDWARE\flash_eerom.c(65): warning:  #1-D: last line of file ends without a newline
+  //}
+..\..\HARDWARE\flash_eerom.c: 1 warning, 0 errors
+compiling bsp_rtc.c...
+compiling touch.c...
+..\..\HARDWARE\touch\touch.c(360): warning:  #177-D: variable "temp"  was declared but never referenced
+        s32 temp;                        
+..\..\HARDWARE\touch\touch.c: 1 warning, 0 errors
+compiling ch376.c...
+compiling FILESYS.c...
 linking...
-Program Size: Code=66696 RO-data=573952 RW-data=692 ZI-data=32204  
+Program Size: Code=66912 RO-data=574120 RW-data=696 ZI-data=32208  
 FromELF: creating hex file...
 After Build - User command #1: D:\Keil_v5\ARM\ARMCC\bin\fromelf.exe --bin -o ..\..\Output\update.bin ..\..\Output\Template.axf
-"..\..\Output\Template.axf" - 0 Error(s), 11 Warning(s).
+"..\..\Output\Template.axf" - 0 Error(s), 60 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -69,7 +185,7 @@ Package Vendor: Keil
   D:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.12.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include
 
 <h2>Collection of Component Files used:</h2>
-Build Time Elapsed:  00:00:08
+Build Time Elapsed:  00:00:37
 </pre>
 </body>
 </html>

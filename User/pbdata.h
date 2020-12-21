@@ -741,6 +741,36 @@ typedef struct
 
 
 } Rev_Combuff_Typedef;
+
+typedef struct{
+	vu8 No[20];
+    vu8 Send_res[9];
+    vu8 back;
+    vu8 Send_V[9];
+    vu8 back1;
+    vu8 comp[5];
+    vu8 ret[2];
+}SD_DATA;
+
+typedef struct{
+	char Date[8];
+	char Time[8];
+	float Temp[16][500];
+	char add[344];
+}SAVE_SD;
+
+typedef struct{
+	char Date[40][8];
+	u32 Index[40];
+	u32 ext[8];
+}SAVE_INDEX;
+
+
+typedef struct{
+	u32 Num[128];
+}BLOCK_REC;
+
+
 extern Rev_Combuff_Typedef Rev_Combuff;
 extern Send_ComBuff_Typedef Send_ComBuff;
 

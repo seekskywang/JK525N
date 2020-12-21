@@ -120,6 +120,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGUARM</Key>
+          <Name>猬穡尌?尌?趏峈</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -465,6 +466,16 @@
           <count>36</count>
           <WinNumber>2</WinNumber>
           <ItemText>usbstatus</ItemText>
+        </Ww>
+        <Ww>
+          <count>37</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>uwatch,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>38</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>Send_To_U</ItemText>
         </Ww>
       </WatchWindow2>
       <MemoryWindow1>

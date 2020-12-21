@@ -235,7 +235,7 @@ void Disp_Test_value(u8 num);
 void Disp_Fastbutton(void);
 void Disp_Test_Set_Item(void);
 void DispSet_value(u8 keynum);
-
+void Disp_SD_VIEW_Item(void);
 void Use_SysSetProcess(void);
 
 void Sys_Process(void);

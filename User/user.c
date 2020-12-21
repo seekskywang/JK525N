@@ -122,7 +122,7 @@ const uint8_t All_TopName[][21+1]=
 	{"< 系统设置 >"},
 	{"[ LCR文件列表 ]"},
 	{"< 系统信息 >"},
-
+	{"< 数据查看 >"},
 };
 
 const uint8_t All_TopName_E[][21+1]=
@@ -1884,10 +1884,10 @@ void Disp_Button_value1( uint32_t value )
 						WriteString_16(24, BUTTON_2, "显 示",  0);
 						WriteString_16(24 + BUTTON_W, BUTTON_1+5, "测 量",  0);
 						WriteString_16(24 + BUTTON_W, BUTTON_2, "设 置",  0);
-						WriteString_16(24 + BUTTON_W*2, BUTTON_1+5, "数 据",  0);
-						WriteString_16(24 + BUTTON_W*2, BUTTON_2, "查 看",  0);
-						WriteString_16(24 + BUTTON_W*3, BUTTON_1+5, "系 统",  0);
-						WriteString_16(24 + BUTTON_W*3, BUTTON_2, "信 息",  0);
+						WriteString_16(24 + BUTTON_W*2, BUTTON_1+5, "系 统",  0);
+						WriteString_16(24 + BUTTON_W*2, BUTTON_2, "设 置",  0);
+						WriteString_16(24 + BUTTON_W*3, BUTTON_1+5, "数 据",  0);
+						WriteString_16(24 + BUTTON_W*3, BUTTON_2, "查 看",  0);
 					
 						if(GetSystemStatus() == SYS_STATUS_TEST)
 						{
@@ -2276,6 +2276,37 @@ void Disp_Test_Set_Item(void)
 }
 
 
+void Disp_SD_VIEW_Item(void)
+{
+	uint32_t i;
+    const u8 (*pt)[sizeof(Set_testitem[0])];
+    const u8 (*ppt)[sizeof(All_TopName[0])];
+	
+	Disp_TestSetScreen();
+	
+		Colour.Fword = White;
+		Colour.black = LCD_COLOR_TEST_BAR;
+		if( Jk516save.Sys_Setvalue.lanage )
+        ppt = All_TopName_E;
+    else
+        ppt = All_TopName;
+		WriteString_16( 0, 4, ppt[11],  0);
+		
+//		Colour.Fword = LCD_COLOR_SET;
+//		Colour.black = LCD_COLOR_TEST_BACK;
+//    if( Jk516save.Sys_Setvalue.lanage )
+//        pt = Set_testitem_E;
+//    else
+//        pt = Set_testitem;
+//		
+//		Colour.black = LCD_COLOR_TEST_BACK;	   
+//		for( i = 0; i < (sizeof(Set_testitem)/(sizeof(Set_testitem[0]))); i++ )
+//			if( i < sizeof(Set_testitem)/(sizeof(Set_testitem[0]))/2 )
+//					WriteString_16( LIST1, FIRSTLINE+HIGH1*i, pt[i], 0);
+//			else
+//					WriteString_16( LIST2, FIRSTLINE+HIGH1*(i-sizeof(Set_testitem)/(sizeof(Set_testitem[0]))/2), pt[i],  0);
+//		Disp_Button_value1(0);
+}
 //显示设置参数的值Setup_Valueall
 void DispSet_value(u8 keynum)
 {
