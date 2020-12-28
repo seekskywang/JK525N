@@ -324,6 +324,9 @@ u8 GetSoftTimerOut(u8 id);
 #define UNCONNECTED		 0
 #define CONNECTED		 1
 
+//SD卡相关
+#define SD_MAX_BLOCK				200000
+
 //定义变量
 extern uint8_t softswitch;
 extern u8 dt;
@@ -719,7 +722,7 @@ typedef struct
     vu8 back1;
     vu8 comp[5];
     vu8 ret[2];
-
+	vu8 ext[17];
 }Send_To_UTypedef;
 extern Send_To_UTypedef Send_To_U;
 typedef struct 
@@ -743,21 +746,8 @@ typedef struct
 } Rev_Combuff_Typedef;
 
 typedef struct{
-	vu8 No[20];
-    vu8 Send_res[9];
-    vu8 back;
-    vu8 Send_V[9];
-    vu8 back1;
-    vu8 comp[5];
-    vu8 ret[2];
-}SD_DATA;
-
-typedef struct{
-	char Date[8];
-	char Time[8];
-	float Temp[16][500];
-	char add[344];
-}SAVE_SD;
+	Send_To_UTypedef SAVEBUFF[8];
+}SAVE_DATA;
 
 typedef struct{
 	char Date[40][8];
@@ -812,5 +802,5 @@ extern u8 USB_Openflag,Disp_usbflag,Disp_RTCflag;
 extern u8 Key_Up_flag,Touch_Up_flag;
 extern u8 Touch_Item;
 extern u8 touch_value;
-
+extern u8 usbreadtime[8];
 #endif

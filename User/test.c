@@ -16,7 +16,8 @@
 #include  "usbd_usr.h"
 #include  "usbd_desc.h"
 #include "flash_if.h"
-#include "./internalFlash/bsp_internalFlash.h"   
+#include "./internalFlash/bsp_internalFlash.h"
+#include "sdio/bsp_sdio_sd.h"
 //反馈切换
 // 输入0 1 2 3  U16_4094
 // 0  1000V
@@ -121,6 +122,14 @@ u8 usbbuf[0x40];
 u8 send_usbbuf[0x40];
 u8 powerstat;
 u8 sdstatus;
+u8 holdflag;
+u16 foldernum;
+char indexname[20];
+u16 hispage;
+u16 hispagestart;
+u16 hispageend;
+u16 hiscursor;
+
 #ifdef USB_OTG_HS_INTERNAL_DMA_ENABLED
   #if defined ( __ICCARM__ ) /*!< IAR Compiler */
     #pragma data_alignment=4   
@@ -146,33 +155,172 @@ uint8_t MODS_ReadRegValue(uint16_t reg_addr, uint8_t *reg_value);
 uint16_t BEBufToUint16(uint8_t *_pBuf);
 void MODS_03H(void);
 uint16_t CRC16(uint8_t *_pBuf, uint16_t _usLen);
+SAVE_DATA SDSAVE;
+BLOCK_REC BlockNum;
+SAVE_INDEX HisIndex;
+u8 recordflag;
+u8 sdcount;
+u8 indexflag;
 
-//};
-//==========================================================
-//函数名称：Power_Process
-//函数功能：上电处理
-//入口参数：无
-//出口参数：无
-//创建日期：2015.10.26
-//修改日期：2015.10.26 08:53
-//备注说明：开机长按SET进入校准调试模式
-//==========================================================
-//void DIS_Line(void)
-//{
-//  uint16_t i,j;
-//  
-//  uint32_t *p = (uint32_t *)(LCD_LAYER2_START_ADDR );
-//  
-//  for(j=0;j<480;j++)
-//  for(i=0;i<272;i++)
-//  {
-//    //ARGB8888 
-//    *p = 0x7Fff00;
-//    p++;
-//    }
-//  
-//  
-//}  
+//SD卡储存相关
+void Read_Block_Rec(void)
+{
+	SD_ReadBlock((uint8_t *)&BlockNum,0,512);
+	SD_WaitWriteOperation();
+	while(SD_GetStatus() != SD_TRANSFER_OK);
+}
+
+void Write_Block_Rec(void)
+{
+	SD_WriteBlock((uint8_t *)&BlockNum,0,512);
+	SD_WaitWriteOperation();	
+	while(SD_GetStatus() != SD_TRANSFER_OK);
+}
+
+void Read_His_Data(u32 block)
+{	
+//	sizewatch =(sizeof(SaveBuffer)*block);
+	SD_ReadMultiBlocks((uint8_t *)&SDSAVE,61952+(sizeof(SDSAVE)*block),512,sizeof(SDSAVE)/512);
+	SD_WaitWriteOperation();
+	while(SD_GetStatus() != SD_TRANSFER_OK);
+	
+}
+
+void Write_His_Data(void)
+{
+	u16 i;
+	SD_WriteBlock((uint8_t *)&BlockNum,0,512);
+	SD_WaitWriteOperation();	
+	while(SD_GetStatus() != SD_TRANSFER_OK);
+	SD_WriteMultiBlocks((uint8_t *)&SDSAVE,61952+sizeof(SDSAVE)*BlockNum.Num[0],512,sizeof(SDSAVE)/512);
+	SD_WaitWriteOperation();	
+	while(SD_GetStatus() != SD_TRANSFER_OK);	
+	BlockNum.Num[0]++;
+//	if(BlockNum.Num[1] > 4800)
+//	{
+//		BlockNum.Num[0] = 0;
+//	}
+//	if(BlockNum.Num[0] > SD_MAX_BLOCK)
+//	{
+//		BlockNum.Num[0] = 0;
+//	}
+//	memset(SaveBuffer.Time,0,sizeof(SaveBuffer.Time));
+//	memset(SaveBuffer.Temp,0,sizeof(SaveBuffer.Temp));
+	memset(SDSAVE.SAVEBUFF,0,sizeof(SDSAVE.SAVEBUFF));
+}
+
+void Write_His_Data_Man(void)
+{
+	u16 i;
+	SD_WriteBlock((uint8_t *)&BlockNum,0,512);
+	SD_WaitWriteOperation();	
+	while(SD_GetStatus() != SD_TRANSFER_OK);
+	SD_WriteMultiBlocks((uint8_t *)&SDSAVE,61952+sizeof(SDSAVE)*BlockNum.Num[0],512,sizeof(SDSAVE)/512);
+	SD_WaitWriteOperation();	
+	while(SD_GetStatus() != SD_TRANSFER_OK);	
+	if(indexflag == 1)
+	{
+		strcpy(HisIndex.Date[BlockNum.Num[1]%40],usbreadtime);
+		HisIndex.Index[BlockNum.Num[1]%40] = BlockNum.Num[0];
+//		for(i=0;i<8;i++)
+//		{
+//			HisIndex.Date[BlockNum.Num[1]][i]=SaveBuffer.Time[0][i]; 
+//		}
+		SD_WriteBlock((uint8_t *)&HisIndex,512+512*(BlockNum.Num[1]/40),512);
+		SD_WaitWriteOperation();	
+		while(SD_GetStatus() != SD_TRANSFER_OK);
+		BlockNum.Num[1] ++;
+		indexflag = 0;
+	}
+	BlockNum.Num[0]++;
+	if(BlockNum.Num[1] > 4800)
+	{
+		BlockNum.Num[0] = 0;
+	}
+	if(BlockNum.Num[0] > SD_MAX_BLOCK)
+	{
+		BlockNum.Num[0] = 0;
+	}
+	memset(SDSAVE.SAVEBUFF,0,sizeof(SDSAVE.SAVEBUFF));
+//	memset(SaveBuffer.Temp,0,sizeof(SaveBuffer.Temp));
+}
+
+void Read_Index(u32 indexnum)
+{
+	SD_ReadBlock((uint8_t *)&HisIndex,512+(512*indexnum),512);
+	SD_WaitWriteOperation();
+	while(SD_GetStatus() != SD_TRANSFER_OK);
+}
+
+
+void Draw_His_Index(u8 page,u8 keynum)
+{
+	u16 i,j;
+	char buf[14],num[5],indexpages[10];
+	Read_Index(page/4);
+	
+	Colour.black = LCD_COLOR_TEST_BACK;
+	Colour.Fword = LCD_COLOR_TEST_BACK;
+	LCD_DrawFullRect(10,40,400,370);
+	
+//	LCD_SetColors(LCD_COLOR_HLT,LCD_COLOR_BACK);
+	Colour.black = LCD_COLOR_TEST_BACK;
+	Colour.Fword = LCD_COLOR_TEST_BUTON;
+	sprintf(indexpages,"%0.4d/%0.4d",page+1,BlockNum.Num[1]/10+1);
+	WriteString_16(480,40+9*35,(uint8_t *)indexpages,0);
+	
+	if(page < BlockNum.Num[1]/10)
+	{
+		foldernum = 10;
+	}else{
+		foldernum = BlockNum.Num[1]%10;
+	}	
+	hispage = HisIndex.Index[keynum+10*page-1]+1;
+	hispagestart = hispage;
+	hispageend = HisIndex.Index[keynum+10*page];
+	for(i=0;i<foldernum;i++)
+	{
+		
+		sprintf(indexname,"20%0.2d-%0.2d-%0.2d-%0.2d:%0.2d:%0.2d",
+																		  HisIndex.Date[i+10*page][1],
+																		  HisIndex.Date[i+10*page][2],
+																		  HisIndex.Date[i+10*page][3],
+																		  HisIndex.Date[i+10*page][4],
+																		  HisIndex.Date[i+10*page][5],
+																		  HisIndex.Date[i+10*page][6]);
+//		LCD_SetColors(LCD_COLOR_YELLOW,LCD_COLOR_BACK);
+//		Colour.black = LCD_COLOR_TEST_BACK;
+		Colour.Fword = White;
+		Colour.black = LCD_COLOR_TEST_BACK;
+		sprintf(num,"%d",i+1);
+		WriteString_16(10,40+i*35,(uint8_t *)num,0);
+		WriteString_16(40,40+i*35,(uint8_t *)".",0);
+		if(i == keynum)
+		{
+			Colour.black = LCD_COLOR_SELECT;
+		}else{
+			Colour.black = LCD_COLOR_TEST_BACK;
+		}
+		WriteString_16(60,40+i*35,(uint8_t *)indexname,0);
+	}
+}
+
+void Draw_His_Data(void)
+{
+	u8 i;
+	u16 j;
+	u16 pages;
+	u16 cpage;
+	char pagebuf[10];
+		
+	pages = hispageend - hispagestart + 1;
+	cpage = hispage - hispagestart + 1;
+	
+	LCD_Clear(LCD_COLOR_TEST_BACK);
+	Disp_SD_VIEW_Item();
+	
+	
+}
 
 //关机检测
 u8 PowerOffDetect(void)
@@ -416,6 +564,12 @@ void Power_Process(void)
     Range=Jk516save.Set_Data.Range;
     Range_Control(Range);
     RangeChange_Flag=1;
+	if(SD_Init() == SD_OK)
+	{
+		sdstatus = 1;
+		Read_Block_Rec();
+		Read_Index(BlockNum.Num[1]/40);
+	}
 //		Touch_GPIO_Config();
 //		tp_dev.init();				//触摸屏初始化
 	
@@ -424,7 +578,7 @@ void Power_Process(void)
 				i++;
 				j++;
 				if( i > POWERON_DISP_TIME )//延时20*100mS=2s后自动退出
-							SetSystemStatus(SYS_STATUS_SETUP);//待测状态
+							SetSystemStatus(SYS_STATUS_TEST);//待测状态
 				delay_ms(100);
 				key=Key_Read_WithTimeOut(TICKS_PER_SEC_SOFTTIMER/10);//等待按键(100*10ms/10=100ms)
 				if(key!=KEY_NONE)
@@ -508,6 +662,13 @@ void Power_Process(void)
 		}
 }
 
+//void Read_Index(u32 indexnum)
+//{
+//	SD_ReadBlock((uint8_t *)&HisIndex,512+(512*indexnum),512);
+//	SD_WaitWriteOperation();
+//	while(SD_GetStatus() != SD_TRANSFER_OK);
+//}
+
 //==========================================================
 //函数名称：SD_Process
 //函数功能：读取查看SD卡数据
@@ -520,18 +681,25 @@ void Power_Process(void)
 void SD_Process(void)
 {
 	u8 keynum=0,i;
+	u16 sdpage;
 	static vu32 uwatch;
 	Disp_Coordinates_Typedef  Coordinates;
 //	Send_Ord_Typedef Uart;
 	
 	vu8 key=0;
 	vu8 Disp_Flag=1;
+	vu8 folder = 0;;
 	keynum=0;
+	sdpage = 0;
 	LCD_Clear(LCD_COLOR_TEST_BACK);
 	Disp_SD_VIEW_Item();
+	if(SD_Init() == SD_OK)
+	{
+		sdstatus = 1;
+	}
 	while(GetSystemStatus()==SYS_STATUS_SDFILE)
 	{
-		uwatch = sizeof(Send_To_U);
+		uwatch = sizeof(SDSAVE);
 		powerstat = PowerOffDetect();
 		if(powerstat == 0)
 		{
@@ -539,12 +707,194 @@ void SD_Process(void)
 		}
 		if(Disp_Flag==1)
 		{
-			
-//			DispSet_value(keynum);
+			if(folder == 0)
+			{
+				Draw_His_Index(sdpage,keynum);
+			}else if(folder == 1){
+				
+			}
            
 			Disp_Flag=0;
 		
 		}
+		key=Key_Read_WithTimeOut(TICKS_PER_SEC_SOFTTIMER/10);
+        if(key!=KEY_NONE)
+		{	Disp_Flag=1;
+			ButtonSound();
+			switch(key)
+			{
+				case Key_F1:
+
+					switch(keynum)
+					{
+						case 0:
+							//if(Button_Page.page==0)
+								SetSystemStatus(SYS_STATUS_TEST);//
+//							else
+//								SetSystemStatus(SYS_STATUS_FILE);
+								
+							break;
+							
+						default:
+							break;
+					
+					
+					}
+
+				break;
+				case Key_F2:
+					
+
+					switch(keynum)
+					{
+						case 0:
+								SetSystemStatus(SYS_STATUS_SETUP);
+							break;
+						default:
+							break;
+					
+					
+					}				
+				
+
+				break;
+				case Key_F3:
+					switch(keynum)
+					{
+						case 0:
+								SetSystemStatus(SYS_STATUS_SYSSET);
+							break;
+						default:
+							break;
+					
+					
+					}	
+					
+				break;
+				case Key_F4:
+					switch(keynum)
+					{
+						case 0:
+								SetSystemStatus(SYS_STATUS_SDFILE);
+							break;
+						default:
+							break;					
+					}	
+				
+				break;
+				case Key_F5:
+					switch(keynum)
+					{
+						case 0:
+							
+						break;
+						default:
+							break;
+					
+					
+					}
+                    
+					
+				break;
+				case Key_Disp:
+					if(folder == 0)
+					{
+						SetSystemStatus(SYS_STATUS_TEST);
+					}else if(folder == 1){
+						folder = 0;
+					}
+				break;
+				case Key_SETUP:
+					folder = 1;
+                        //SetSystemStatus(SYS_STATUS_SETUPTEST);
+				break;
+				
+				case Key_LEFT:
+					if(keynum==0)
+						keynum=12;
+					else
+					if(keynum>6)
+						keynum-=6;
+					else
+						keynum+=5;
+					
+						
+				break;
+				case Key_RIGHT:
+					if(keynum==0)
+						keynum=1;
+					else
+					if(keynum<=6)
+						keynum+=6;
+					else
+						keynum-=5;
+					
+						
+				break;
+				case Key_DOWN:
+					if(keynum>11)
+						keynum=0;
+					else
+						keynum++;
+					
+					
+				break;
+				case Key_UP:
+					if(keynum<1)
+						keynum=11;
+					else
+						keynum--;
+					
+				break;
+				case Key_DOT:
+
+					break;
+				case Key_NUM1:
+				//break;
+				case Key_NUM2:
+				//break;
+				case Key_NUM3:
+				//break;
+				case Key_NUM4:
+				//break;
+				case Key_NUM5:
+				//break;
+				case Key_NUM6:
+				//break;
+				case Key_NUM7:
+				//break;
+				case Key_NUM8:
+				//break;
+				case Key_NUM9:
+				//break;
+				case Key_NUM0:
+				break;
+                case Key_FAST:
+				
+					keynum=0;
+																							
+					break;
+				case Key_BACK:
+				break;
+				case Key_LOCK:
+				break;
+				case Key_BIAS:
+				break;
+				case Key_REST:
+				break;
+				case Key_TRIG:
+				break;
+				default:
+				break;
+					
+			}
+		
+		
+		}
+	 	
+	
+		Store_set_flash();
+	
 	}
 	
 	
@@ -1286,9 +1636,7 @@ void Setup_Process(void)
 				case Key_NUM0:
 				break;
                 case Key_FAST:
-				
 					keynum=0;
-																							
 					break;
 				case Key_BACK:
 				break;
@@ -1361,12 +1709,10 @@ void Test_Process(void)
     i=0;
     range_over=0;
 	V_Range=1;
+	
 		while(GetSystemStatus()==SYS_STATUS_TEST)
 		{
-			if(sdstatus == 0)
-			{
-				sdstatus = SD_Init();
-			}
+			
 			if(GPIO_ReadInputDataBit( GPIOE,  GPIO_Pin_3)==0)
 			{
 				delay_ms(100);
@@ -1399,7 +1745,18 @@ void Test_Process(void)
 				Colour.Fword = White;
 				Colour.black = LCD_COLOR_TEST_BACK;
 				Disp_R_V();
-			}  
+			}
+	  if(holdflag == 1)
+	  {
+		  Colour.black = LCD_COLOR_TEST_BACK;
+		  Colour.Fword = LCD_COLOR_RED;
+		  WriteString_16(500-48-80-30,8,"H",0);
+	  }else{
+		  Colour.black = LCD_COLOR_TEST_BACK;
+		  Colour.Fword = LCD_COLOR_TEST_BACK;
+		  WriteString_16(500-48-80-30,8," ",0);
+	  }
+		  
       if( Disp_usbflag || Disp_Flag )
       {
         Disp_Usbflag(usbstatus);
@@ -1426,7 +1783,7 @@ void Test_Process(void)
             
         if(Jk516save.Set_Data.trip==0)
             test_start=1;
-        if(open_flag==0)//不开路
+        if(open_flag==0 && holdflag == 0)//不开路
         {
             if(test_start==1)
             {
@@ -1672,37 +2029,39 @@ void Test_Process(void)
         }
         else
         {
-			if(test_start==1)
+			if(holdflag == 0)
 			{
-				V_Range=1;
-				VRange_Changecomp();
-				
-//			   if(range_flag) //开路的时候的档位控制
-			   {
-				   if(Jk516save.Set_Data.Range_Set==0)
+				if(test_start==1)
+				{
+					V_Range=1;
+					VRange_Changecomp();
+					
+	//			   if(range_flag) //开路的时候的档位控制
 				   {
-					   Range=3;
-						
+					   if(Jk516save.Set_Data.Range_Set==0)
+					   {
+						   Range=3;
+					   }
+					   else
+					   {
+						   
+					   }
+					   if(Jk516save.Set_Data.Range_Set!=1)
+					   Range_Control(Range);
+						   i=0;
+						   range_flag=0;
+						   RangeChange_Flag=1;
+					   
+					   
+					   
 				   }
-				   else
-				   {
-					 
-				   }
-			 	   if(Jk516save.Set_Data.Range_Set!=1)
-				   Range_Control(Range);
-					   i=0;
-					   range_flag=0;
-					   RangeChange_Flag=1;
-				   
-				   
-				   
+					Disp_Open();
 			   }
-				Disp_Open();
 		   }
         }
             
        
-	 	if(test_start&&test_over==1)//显示测试值
+	 	if(test_start&&test_over==1 && holdflag == 0)//显示测试值
 		{   
 
             test_over=0;
@@ -1788,7 +2147,6 @@ void Test_Process(void)
 							}else{
 								Test_Value=Datacov(disp_I*10,Range);
 							}
-							
 							Disp_Testvalue(Test_Value,Test_Value_V,0);//显示电阻和电压
 							if(Jk516save.Set_Data.V_comp)
 							{
@@ -1815,7 +2173,6 @@ void Test_Process(void)
 									Beep_Out(0);
 									Led_Pass_On();
 									
-								
 								}
 								else 
 								{
@@ -1954,7 +2311,18 @@ void Test_Process(void)
 							}
 							if(sdstatus == 1)
 							{
-								
+								if(recordflag == 1)
+								{
+									if(sdcount == 7)
+									{
+										SDSAVE.SAVEBUFF[sdcount] = Send_To_U;
+										Write_His_Data();
+										sdcount = 0;
+									}else{
+										SDSAVE.SAVEBUFF[sdcount] = Send_To_U;
+										sdcount++;
+									}
+								}
 							}
 							
 						}
@@ -2161,7 +2529,18 @@ void Test_Process(void)
                         switch(keynum)
                         {
                             case 0:
-    								SetSystemStatus(SYS_STATUS_SYSSET);
+								if(recordflag == 0)
+								{
+									recordflag = 1;
+//									Drawhomemenu();
+//									count = 0;
+									indexflag = 1;
+								}else if(recordflag == 1){
+									Write_His_Data_Man();
+									recordflag = 0;
+//									Drawhomemenu();
+									Write_Block_Rec();					
+								}
                                 break;
 					
     						case 4://MAX_R_RANGE
@@ -2184,7 +2563,13 @@ void Test_Process(void)
                         switch(keynum)//
                         {
                            case 0:
-    								SetSystemStatus(SYS_STATUS_SYS);
+//    								SetSystemStatus(SYS_STATUS_SYS);
+								if(holdflag == 0)
+								{
+									holdflag = 1;
+								}else{
+									holdflag = 0;
+								}
                                 break;
                             case 4:
                                 if(Range>=RANGE_MAX)

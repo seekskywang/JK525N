@@ -32,7 +32,7 @@
 //#include "Uart0.h"
 //#include "Com.h"
 //#include "User.h"
-
+u8 usbreadtime[8];
 u8 DispBuf[DISP_MAX_LEN];//显示缓冲区定义
 //==========================================================
 const u32 Port_Select[16][16]=//pos(x,y)x0-15 y0-15
@@ -1855,49 +1855,53 @@ void Disp_Button_value1( uint32_t value )
 		Disp_Fastbutton();
 		if(value == 0)
 		{
-				Colour.Fword = LCD_COLOR_BUTTON;
-				Colour.black = LCD_COLOR_TEST_BUTON;
-			
-				if( Jk516save.Sys_Setvalue.lanage )
+			Colour.Fword = LCD_COLOR_BUTTON;
+			Colour.black = LCD_COLOR_TEST_BUTON;
+		
+			if( Jk516save.Sys_Setvalue.lanage )
+			{
+				WriteString_16(25, BUTTON_1+5, "MEAS",  0);
+				WriteString_16(25, BUTTON_2, "DISP",  0);
+				WriteString_16(25 + BUTTON_W, BUTTON_1+5, "MEAS",  0);
+				WriteString_16(25 + BUTTON_W, BUTTON_2, "SETUP",  0);
+				WriteString_16(25 + BUTTON_W*2, BUTTON_1+5, "DATA",  0);
+				WriteString_16(25 + BUTTON_W*2, BUTTON_2, "REVIEW",  0);
+				WriteString_16(25 + BUTTON_W*3, BUTTON_1+5, "SYS",  0);
+				WriteString_16(25 + BUTTON_W*3, BUTTON_2, "INFO",  0);
+				
+				if( GetSystemStatus() == SYS_STATUS_TEST )
 				{
-						WriteString_16(25, BUTTON_1+5, "MEAS",  0);
-						WriteString_16(25, BUTTON_2, "DISP",  0);
-						WriteString_16(25 + BUTTON_W, BUTTON_1+5, "MEAS",  0);
-						WriteString_16(25 + BUTTON_W, BUTTON_2, "SETUP",  0);
-						WriteString_16(25 + BUTTON_W*2, BUTTON_1+5, "DATA",  0);
-						WriteString_16(25 + BUTTON_W*2, BUTTON_2, "REVIEW",  0);
-						WriteString_16(25 + BUTTON_W*3, BUTTON_1+5, "SYS",  0);
-						WriteString_16(25 + BUTTON_W*3, BUTTON_2, "INFO",  0);
-						
-						if( GetSystemStatus() == SYS_STATUS_TEST )
-						{
-								WriteString_16(25 + BUTTON_W*4, BUTTON_1+5, "CLEAR",  0);
-								WriteString_16(25 + BUTTON_W*4, BUTTON_2, "VALUE",  0);
-						}else if(GetSystemStatus() == SYS_STATUS_SETUP){
-								WriteString_16(25 + BUTTON_W*4, BUTTON_1+5, " SYS",  0);
-								WriteString_16(10 + BUTTON_W*4, BUTTON_2, "UPDATE",  0);
-						}
+						WriteString_16(25 + BUTTON_W*4, BUTTON_1+5, "CLEAR",  0);
+						WriteString_16(25 + BUTTON_W*4, BUTTON_2, "VALUE",  0);
+				}else if(GetSystemStatus() == SYS_STATUS_SETUP){
+						WriteString_16(25 + BUTTON_W*4, BUTTON_1+5, " SYS",  0);
+						WriteString_16(10 + BUTTON_W*4, BUTTON_2, "UPDATE",  0);
 				}
-				else
+			}
+			else
+			{
+				WriteString_16(24, BUTTON_1+5, "测 量",  0);
+				WriteString_16(24, BUTTON_2, "显 示",  0);
+				WriteString_16(24 + BUTTON_W, BUTTON_1+5, "测 量",  0);
+				WriteString_16(24 + BUTTON_W, BUTTON_2, "设 置",  0);
+				WriteString_16(24 + BUTTON_W*2, BUTTON_1+5, "系 统",  0);
+				WriteString_16(24 + BUTTON_W*2, BUTTON_2, "设 置",  0);
+//				WriteString_16(24 + BUTTON_W*3, BUTTON_1+5, "数 据",  0);
+//				WriteString_16(24 + BUTTON_W*3, BUTTON_2, "查 看",  0);
+			
+				if(GetSystemStatus() == SYS_STATUS_TEST)
 				{
-						WriteString_16(24, BUTTON_1+5, "测 量",  0);
-						WriteString_16(24, BUTTON_2, "显 示",  0);
-						WriteString_16(24 + BUTTON_W, BUTTON_1+5, "测 量",  0);
-						WriteString_16(24 + BUTTON_W, BUTTON_2, "设 置",  0);
-						WriteString_16(24 + BUTTON_W*2, BUTTON_1+5, "系 统",  0);
-						WriteString_16(24 + BUTTON_W*2, BUTTON_2, "设 置",  0);
 						WriteString_16(24 + BUTTON_W*3, BUTTON_1+5, "数 据",  0);
-						WriteString_16(24 + BUTTON_W*3, BUTTON_2, "查 看",  0);
-					
-						if(GetSystemStatus() == SYS_STATUS_TEST)
-						{
-								WriteString_16(24 + BUTTON_W*4, BUTTON_1+5, "短 路",  0);
-								WriteString_16(24 + BUTTON_W*4, BUTTON_2, "清 零",  0);
-						}else if(GetSystemStatus() == SYS_STATUS_SETUP){
-								WriteString_16(25 + BUTTON_W*4, BUTTON_1+5, "固 件",  0);
-								WriteString_16(25 + BUTTON_W*4, BUTTON_2, "升 级",  0);
-						}
-			  }
+						WriteString_16(24 + BUTTON_W*3, BUTTON_2, "保 持",  0);
+						WriteString_16(24 + BUTTON_W*4, BUTTON_1+5, "短 路",  0);
+						WriteString_16(24 + BUTTON_W*4, BUTTON_2, "清 零",  0);
+				}else if(GetSystemStatus() == SYS_STATUS_SETUP){
+						WriteString_16(24 + BUTTON_W*3, BUTTON_1+5, "系 统",  0);
+						WriteString_16(24 + BUTTON_W*3, BUTTON_2, "信 息",  0);
+						WriteString_16(25 + BUTTON_W*4, BUTTON_1+5, "固 件",  0);
+						WriteString_16(25 + BUTTON_W*4, BUTTON_2, "升 级",  0);
+				}
+			}
 		}
 		else if(value == 1)
 		{
@@ -1909,6 +1913,44 @@ void Disp_Button_value1( uint32_t value )
 				WriteString_16(84+80, 271-20, "数据",  0);
 				WriteString_16(84+320, 271-40+5, "更多",  0);
 				WriteString_16(84+320, 271-20, " 2/2",  0);
+		}else if(value == 2){
+			Colour.Fword = LCD_COLOR_BUTTON;
+			Colour.black = LCD_COLOR_TEST_BUTON;
+		
+			if( Jk516save.Sys_Setvalue.lanage )
+			{
+				WriteString_16(25, BUTTON_1+5, "MEAS",  0);
+				WriteString_16(25, BUTTON_2, "DISP",  0);
+				WriteString_16(25 + BUTTON_W, BUTTON_1+5, "MEAS",  0);
+				WriteString_16(25 + BUTTON_W, BUTTON_2, "SETUP",  0);
+				WriteString_16(25 + BUTTON_W*2, BUTTON_1+5, "DATA",  0);
+				WriteString_16(25 + BUTTON_W*2, BUTTON_2, "REVIEW",  0);
+				WriteString_16(25 + BUTTON_W*3, BUTTON_1+5, "SYS",  0);
+				WriteString_16(25 + BUTTON_W*3, BUTTON_2, "INFO",  0);
+				
+				if( GetSystemStatus() == SYS_STATUS_TEST )
+				{
+						WriteString_16(25 + BUTTON_W*4, BUTTON_1+5, "CLEAR",  0);
+						WriteString_16(25 + BUTTON_W*4, BUTTON_2, "VALUE",  0);
+				}else if(GetSystemStatus() == SYS_STATUS_SETUP){
+						WriteString_16(25 + BUTTON_W*4, BUTTON_1+5, " SYS",  0);
+						WriteString_16(10 + BUTTON_W*4, BUTTON_2, "UPDATE",  0);
+				}
+			}
+			else
+			{
+				WriteString_16(24, BUTTON_1+5, "测 量",  0);
+				WriteString_16(24, BUTTON_2, "显 示",  0);
+				WriteString_16(24 + BUTTON_W, BUTTON_1+5, "全 部",  0);
+				WriteString_16(24 + BUTTON_W, BUTTON_2, "删 除",  0);
+				WriteString_16(24 + BUTTON_W*2, BUTTON_1+5, " 上",  0);
+				WriteString_16(24 + BUTTON_W*2, BUTTON_2, "一 页",  0);
+				WriteString_16(24 + BUTTON_W*3, BUTTON_1+5, " 下",  0);
+				WriteString_16(24 + BUTTON_W*3, BUTTON_2, "一 页",  0);
+				WriteString_16(24 + BUTTON_W*4, BUTTON_1+5, "搜 索",  0);
+				WriteString_16(24 + BUTTON_W*4, BUTTON_2, "数 据",  0);
+
+			}
 		}
 
 }
@@ -2305,7 +2347,7 @@ void Disp_SD_VIEW_Item(void)
 //					WriteString_16( LIST1, FIRSTLINE+HIGH1*i, pt[i], 0);
 //			else
 //					WriteString_16( LIST2, FIRSTLINE+HIGH1*(i-sizeof(Set_testitem)/(sizeof(Set_testitem[0]))/2), pt[i],  0);
-//		Disp_Button_value1(0);
+		Disp_Button_value1(2);
 }
 //显示设置参数的值Setup_Valueall
 void DispSet_value(u8 keynum)
@@ -3797,7 +3839,14 @@ void Disp_dateandtime(void)
     RTC_TimeStructure.RTC_Hours, 
     RTC_TimeStructure.RTC_Minutes,
     RTC_TimeStructure.RTC_Seconds);
-
+	
+	usbreadtime[0] = (u8)((2000 + RTC_DateStructure.RTC_Year) >> 8);//年高位
+	usbreadtime[1] = (u8)(RTC_DateStructure.RTC_Year);//年低位
+	usbreadtime[2] = (u8)(RTC_DateStructure.RTC_Month);//月
+	usbreadtime[3] = (u8)(RTC_DateStructure.RTC_Date);//日
+	usbreadtime[4] = (u8)(RTC_TimeStructure.RTC_Hours);//时
+	usbreadtime[5] = (u8)(RTC_TimeStructure.RTC_Minutes);//分
+	usbreadtime[6] = (u8)(RTC_TimeStructure.RTC_Seconds);//秒
     Colour.black = LCD_COLOR_TEST_BACK;
     LCD_DispString_EN_CH( LIST2+150, LIST1+3, (const uint8_t *)LCDTemp );
 	
