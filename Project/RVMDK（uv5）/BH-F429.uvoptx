@@ -120,7 +120,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGUARM</Key>
-          <Name>猬5w鬚?鬚?趏渋</Name>
+          <Name>猬iwd0?d0?趏9h</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -490,7 +490,7 @@
         <Ww>
           <count>41</count>
           <WinNumber>2</WinNumber>
-          <ItemText>BlockNum</ItemText>
+          <ItemText>BlockNum,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>42</count>
@@ -501,6 +501,21 @@
           <count>43</count>
           <WinNumber>2</WinNumber>
           <ItemText>usbreadtime,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>44</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>indexflag</ItemText>
+        </Ww>
+        <Ww>
+          <count>45</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>hispage,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>46</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>hispageend,0x0A</ItemText>
         </Ww>
       </WatchWindow2>
       <MemoryWindow1>

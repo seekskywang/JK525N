@@ -2712,7 +2712,7 @@ GPIO_ResetBits(GPIOD,GPIO_Pin_13);//y
   */
  void PutPixel(int16_t x, int16_t y) 
 { 
-  if(x < 0 || x > LCD_PIXEL_HEIGHT || y < 0 || y > LCD_PIXEL_WIDTH)
+  if(x < 0 || x > LCD_PIXEL_WIDTH || y < 0 || y > LCD_PIXEL_HEIGHT)
   {
     return;  
   }

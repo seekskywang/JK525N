@@ -720,9 +720,9 @@ typedef struct
     vu8 back;
     vu8 Send_V[9];
     vu8 back1;
-    vu8 comp[5];
+    vu8 comp[6];
     vu8 ret[2];
-	vu8 ext[17];
+	vu8 ext[16];
 }Send_To_UTypedef;
 extern Send_To_UTypedef Send_To_U;
 typedef struct 
@@ -803,4 +803,6 @@ extern u8 Key_Up_flag,Touch_Up_flag;
 extern u8 Touch_Item;
 extern u8 touch_value;
 extern u8 usbreadtime[8];
+extern const uint8_t HIS_TOP[][10+1];
+extern u8 recordflag;
 #endif

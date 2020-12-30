@@ -230,7 +230,7 @@ void Disp_Idle_Menu(void);//显示待机界面
 
 void Disp_xxx(u16 data,u16 pos);
 void Disp_Test_Item(void);
-
+void Disp_Button_value1( uint32_t value );
 void Disp_Test_value(u8 num);
 void Disp_Fastbutton(void);
 void Disp_Test_Set_Item(void);

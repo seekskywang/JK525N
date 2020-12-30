@@ -265,7 +265,7 @@ void Draw_His_Index(u8 page,u8 keynum)
 	
 //	LCD_SetColors(LCD_COLOR_HLT,LCD_COLOR_BACK);
 	Colour.black = LCD_COLOR_TEST_BACK;
-	Colour.Fword = LCD_COLOR_TEST_BUTON;
+	Colour.Fword = White;
 	sprintf(indexpages,"%0.4d/%0.4d",page+1,BlockNum.Num[1]/10+1);
 	WriteString_16(480,40+9*35,(uint8_t *)indexpages,0);
 	
@@ -274,8 +274,13 @@ void Draw_His_Index(u8 page,u8 keynum)
 		foldernum = 10;
 	}else{
 		foldernum = BlockNum.Num[1]%10;
-	}	
-	hispage = HisIndex.Index[keynum+10*page-1]+1;
+	}
+	if(keynum == 0 && page == 0)
+	{
+		hispage = 1;
+	}else{
+		hispage = HisIndex.Index[keynum+10*page-1]+1;
+	}
 	hispagestart = hispage;
 	hispageend = HisIndex.Index[keynum+10*page];
 	for(i=0;i<foldernum;i++)
@@ -311,15 +316,57 @@ void Draw_His_Data(void)
 	u16 j;
 	u16 pages;
 	u16 cpage;
+	char dispbuf[10];
 	char pagebuf[10];
-		
+	
+	Read_His_Data(hispage);	
+	
 	pages = hispageend - hispagestart + 1;
 	cpage = hispage - hispagestart + 1;
 	
 	LCD_Clear(LCD_COLOR_TEST_BACK);
 	Disp_SD_VIEW_Item();
-	
-	
+	Colour.black = LCD_COLOR_TEST_BACK;
+	Colour.Fword = White;
+	for(i=0;i<10;i++)
+	{
+		LCD_DrawLine(0,55+40*i,640,LCD_DIR_HORIZONTAL);
+	}
+	LCD_DrawUniLine(178,55,178,414);
+	LCD_DrawUniLine(338,55,338,414);
+	LCD_DrawUniLine(530,55,530,414);
+	sprintf(pagebuf,"%0.4d/%0.4d",cpage,pages);
+	WriteString_16(400,20,(uint8_t *)pagebuf,0);
+	for(i=0;i<4;i++)
+	{
+		WriteString_16(80+i*160,60,(uint8_t *)HIS_TOP[i],0);
+	}
+	for(j=0;j<8;j++)
+	{
+		for(i=0;i<10;i++)
+		{
+			dispbuf[i] = SDSAVE.SAVEBUFF[j].No[i];
+		}
+		WriteString_16(0,100+40*j,(uint8_t *)dispbuf,0);
+		memset(dispbuf,0,sizeof(dispbuf));
+		for(i=0;i<9;i++)
+		{
+			dispbuf[i] = SDSAVE.SAVEBUFF[j].Send_res[i];
+		}
+		WriteString_16(180,100+40*j,(uint8_t *)dispbuf,0);
+		for(i=0;i<9;i++)
+		{
+			dispbuf[i] = SDSAVE.SAVEBUFF[j].Send_V[i];
+		}
+		WriteString_16(340,100+40*j,(uint8_t *)dispbuf,0);
+		memset(dispbuf,0,sizeof(dispbuf));
+		for(i=0;i<5;i++)
+		{
+			dispbuf[i] = SDSAVE.SAVEBUFF[j].comp[i];
+		}
+		WriteString_16(540,100+40*j,(uint8_t *)dispbuf,0);
+		memset(dispbuf,0,sizeof(dispbuf));
+	}
 }
 
 //关机检测
@@ -711,7 +758,7 @@ void SD_Process(void)
 			{
 				Draw_His_Index(sdpage,keynum);
 			}else if(folder == 1){
-				
+				Draw_His_Data();
 			}
            
 			Disp_Flag=0;
@@ -725,76 +772,81 @@ void SD_Process(void)
 			{
 				case Key_F1:
 
-					switch(keynum)
-					{
-						case 0:
-							//if(Button_Page.page==0)
+//					switch(keynum)
+//					{
+//						case 0:
+//							//if(Button_Page.page==0)
 								SetSystemStatus(SYS_STATUS_TEST);//
 //							else
 //								SetSystemStatus(SYS_STATUS_FILE);
 								
-							break;
-							
-						default:
-							break;
+//							break;
+//							
+//						default:
+//							break;
 					
 					
-					}
+//					}
 
 				break;
 				case Key_F2:
 					
+					BlockNum.Num[0] = 0;
+					BlockNum.Num[1] = 0;
+					Write_Block_Rec();
+					SD_Erase(0,61952+sizeof(SDSAVE));
 
-					switch(keynum)
-					{
-						case 0:
-								SetSystemStatus(SYS_STATUS_SETUP);
-							break;
-						default:
-							break;
-					
-					
-					}				
+//					switch(keynum)
+//					{
+//						case 0:
+//								SetSystemStatus(SYS_STATUS_SETUP);
+//							break;
+//						default:
+//							break;
+//					
+//					
+//					}				
 				
 
 				break;
 				case Key_F3:
-					switch(keynum)
+					if(folder == 0)
 					{
-						case 0:
-								SetSystemStatus(SYS_STATUS_SYSSET);
-							break;
-						default:
-							break;
-					
-					
-					}	
-					
+						if(sdpage > 0)
+						{
+							sdpage --;
+							keynum = 0;
+						}
+					}else if(folder == 1){
+						if(hispage > hispagestart)
+						{
+							hispage --;
+						}
+					}
 				break;
 				case Key_F4:
-					switch(keynum)
+					if(folder == 0)
 					{
-						case 0:
-								SetSystemStatus(SYS_STATUS_SDFILE);
-							break;
-						default:
-							break;					
-					}	
+						if(sdpage < BlockNum.Num[1]/10)
+						{
+							sdpage ++;
+							keynum = 0;
+						}
+					}else if(folder == 1){
+						if(hispage < hispageend)
+						{
+							hispage ++;
+						}
+					}
+					
 				
 				break;
 				case Key_F5:
-					switch(keynum)
-					{
-						case 0:
-							
-						break;
-						default:
-							break;
-					
-					
+					if(folder == 1){
+						folder = 0;
+						LCD_Clear(LCD_COLOR_TEST_BACK);
+						Disp_SD_VIEW_Item();
 					}
-                    
-					
 				break;
 				case Key_Disp:
 					if(folder == 0)
@@ -802,48 +854,57 @@ void SD_Process(void)
 						SetSystemStatus(SYS_STATUS_TEST);
 					}else if(folder == 1){
 						folder = 0;
+						LCD_Clear(LCD_COLOR_TEST_BACK);
+						Disp_SD_VIEW_Item();
 					}
 				break;
 				case Key_SETUP:
-					folder = 1;
+					if(folder == 0)
+						folder = 1;
                         //SetSystemStatus(SYS_STATUS_SETUPTEST);
 				break;
 				
 				case Key_LEFT:
-					if(keynum==0)
-						keynum=12;
-					else
-					if(keynum>6)
-						keynum-=6;
-					else
-						keynum+=5;
+//					if(keynum==0)
+//						keynum=12;
+//					else
+//					if(keynum>6)
+//						keynum-=6;
+//					else
+//						keynum+=5;
 					
 						
 				break;
 				case Key_RIGHT:
-					if(keynum==0)
-						keynum=1;
-					else
-					if(keynum<=6)
-						keynum+=6;
-					else
-						keynum-=5;
+//					if(keynum==0)
+//						keynum=1;
+//					else
+//					if(keynum<=6)
+//						keynum+=6;
+//					else
+//						keynum-=5;
 					
 						
 				break;
 				case Key_DOWN:
-					if(keynum>11)
-						keynum=0;
-					else
-						keynum++;
+					if(folder == 0)
+					{
+						if(keynum < foldernum-1)
+						{
+							keynum ++;
+						}
+					}
 					
 					
 				break;
 				case Key_UP:
-					if(keynum<1)
-						keynum=11;
-					else
-						keynum--;
+					if(folder == 0)
+					{
+						if(keynum > 0)
+						{
+							keynum --;
+						}
+					}
 					
 				break;
 				case Key_DOT:
@@ -1763,11 +1824,11 @@ void Test_Process(void)
         Disp_Flag=0; 
       }
 		  DCD_EP_PrepareRx( &USB_OTG_dev, HID_OUT_EP, usbbuf, 64);//接收PC数据
-			if( UsbHidReceiveComplete )                             //接收到数据
-			{
-					MODS_03H();
-					UsbHidReceiveComplete=0;
-			}
+		if( UsbHidReceiveComplete )                             //接收到数据
+		{
+				MODS_03H();
+				UsbHidReceiveComplete=0;
+		}
       OpenRangflag=read_cpld();//判断是否开路 
 	  OpenRangflag = 1;
 	  open_flag = Read_Openflag();
@@ -2197,6 +2258,7 @@ void Test_Process(void)
 									}                                    
 								}
 								memcpy((void *)Send_To_U.comp,DispBuf,5);
+								Send_To_U.comp[5] = ' ';
 								DispBuf[5]=0;
 								LCD_DrawFullRect(SORTING_XDISP, SORTING_Y_DISP, 60, 22);
 								WriteString_16(SORTING_XDISP, SORTING_Y_DISP, DispBuf,  0);
@@ -2224,6 +2286,7 @@ void Test_Process(void)
 									}
 								
 								 memcpy((void *)Send_To_U.comp,DispBuf,5);
+								 Send_To_U.comp[5] = ' ';
 								 DispBuf[5]=0;
 								 LCD_DrawFullRect(SORTING_XDISP, SORTING_Y_DISP, 60, 22);
 								 WriteString_16(SORTING_XDISP, SORTING_Y_DISP, DispBuf,  0);
@@ -2248,13 +2311,14 @@ void Test_Process(void)
 									
 									}
 								 memcpy((void *)Send_To_U.comp,DispBuf,5);
+								 Send_To_U.comp[5] = ' ';
 								 DispBuf[5]=0; 
 								 LCD_DrawFullRect(SORTING_XDISP, SORTING_Y_DISP, 60, 22);
 								 WriteString_16(SORTING_XDISP, SORTING_Y_DISP, DispBuf,  0);
 								}
 								else
 								{
-								
+									memcpy((void *)Send_To_U.comp,"----- ",6);
 								}
 						  
 							if(Jk516save.Sys_Setvalue.u_flag)
@@ -2535,11 +2599,14 @@ void Test_Process(void)
 //									Drawhomemenu();
 //									count = 0;
 									indexflag = 1;
+									Disp_Button_value1(0);
 								}else if(recordflag == 1){
 									Write_His_Data_Man();
 									recordflag = 0;
 //									Drawhomemenu();
-									Write_Block_Rec();					
+									sdcount = 0;
+									Write_Block_Rec();
+									Disp_Button_value1(0);								
 								}
                                 break;
 					

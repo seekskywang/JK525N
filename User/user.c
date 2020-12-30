@@ -300,6 +300,17 @@ const uint8_t Sys_Setitem[][10+1]=
     {"文件名称:"},
 	
 };
+
+const uint8_t HIS_TOP[][10+1]=
+{
+	{"时间"},
+	{"电阻"},
+	{"电压"},
+	{"分选"},
+
+	
+};
+
 const uint8_t Sys_Setitem_E[][10+1]=
 {
 	{"SERIAL:"},
@@ -350,7 +361,7 @@ const uint8_t BiasButton_Tip[][7+1]=  //频率选择时候的下面的提示符号
 const uint8_t Sys_Sys[][20+1]=
 {
 	{"仪器型号:  JK625  "},
-	{"软件版本:  Ver:1.8"},
+	{"软件版本:  Ver:1.9"},
 	{"硬件版本:  Ver:1.0"},
 	{"仪器编号:"},
 
@@ -358,10 +369,11 @@ const uint8_t Sys_Sys[][20+1]=
 //1.3修改校准数据存到内部flash
 //1.4修改设置数据存到内部flash
 //1.5修改手动触发只存一次数据
+//1.9增加数据保持和sd卡存储数据查看功能
 const uint8_t Sys_Sys_E[][20+1]=
 {
 	{"INST MODEL:  JK625 "},
-	{"SOFT VER:   Ver:1.8"},
+	{"SOFT VER:   Ver:1.9"},
 	{"HARD VER:   Ver:1.0"},
 	{"SERIALNO:"},	
 
@@ -1708,6 +1720,7 @@ const u8 Test_Uint[][4]=
 void Disp_Open(void)
 {
     u32 colour;
+	Colour.Fword = White;
     colour= Colour.black;
     Colour.black=LCD_COLOR_TEST_BACK;
    // if(Jk516save.Set_Data.speed!=3)
@@ -1781,8 +1794,8 @@ void Disp_Testvalue(Test_ValueTypedef value,Test_ValueTypedef value_v,u8 speed)
     else
     Hex_Format(Res_disp , value.dot , 5, FALSE);  
     memcpy((void *)Send_ComBuff.send_res,DispBuf,5);
-    memcpy((void *)Send_To_U.Send_res,DispBuf,5);//电阻
-    memcpy((void *)&Send_To_U.Send_res[5],DISP_UINT[Test_Value.uint],3);//单位
+    memcpy((void *)Send_To_U.Send_res,DispBuf,6);//电阻
+    memcpy((void *)&Send_To_U.Send_res[6],DISP_UINT[Test_Value.uint],3);//单位
 		Send_To_U.back=9;
 		WriteString_Big ( TESTVALUE_X+48+32, TESTVALUE_Y+20, DispBuf ,2); 
 		
@@ -1797,8 +1810,8 @@ void Disp_Testvalue(Test_ValueTypedef value,Test_ValueTypedef value_v,u8 speed)
 		
     memcpy((void *)&Send_To_U.Send_V[1], DispBuf, 6);//存U盘
 		
-    Send_To_U.Send_V[8]='V';
-		
+    Send_To_U.Send_V[7]='V';
+	Send_To_U.Send_V[8]=' ';	
     Send_To_U.back1=9;
 		
     memcpy((void *)&Send_To_U.ret[0],"\r\n",2);
@@ -1884,22 +1897,36 @@ void Disp_Button_value1( uint32_t value )
 				WriteString_16(24, BUTTON_2, "显 示",  0);
 				WriteString_16(24 + BUTTON_W, BUTTON_1+5, "测 量",  0);
 				WriteString_16(24 + BUTTON_W, BUTTON_2, "设 置",  0);
-				WriteString_16(24 + BUTTON_W*2, BUTTON_1+5, "系 统",  0);
-				WriteString_16(24 + BUTTON_W*2, BUTTON_2, "设 置",  0);
+				
 //				WriteString_16(24 + BUTTON_W*3, BUTTON_1+5, "数 据",  0);
 //				WriteString_16(24 + BUTTON_W*3, BUTTON_2, "查 看",  0);
 			
 				if(GetSystemStatus() == SYS_STATUS_TEST)
 				{
+						if(recordflag == 0)
+						{
+							WriteString_16(24 + BUTTON_W*2, BUTTON_1+5, "开 始",  0);
+							WriteString_16(24 + BUTTON_W*2, BUTTON_2, "记 录",  0);
+						}else if(recordflag == 1){
+							WriteString_16(24 + BUTTON_W*2, BUTTON_1+5, "停 止",  0);
+							WriteString_16(24 + BUTTON_W*2, BUTTON_2, "记 录",  0);
+						}
 						WriteString_16(24 + BUTTON_W*3, BUTTON_1+5, "数 据",  0);
 						WriteString_16(24 + BUTTON_W*3, BUTTON_2, "保 持",  0);
 						WriteString_16(24 + BUTTON_W*4, BUTTON_1+5, "短 路",  0);
 						WriteString_16(24 + BUTTON_W*4, BUTTON_2, "清 零",  0);
 				}else if(GetSystemStatus() == SYS_STATUS_SETUP){
-						WriteString_16(24 + BUTTON_W*3, BUTTON_1+5, "系 统",  0);
-						WriteString_16(24 + BUTTON_W*3, BUTTON_2, "信 息",  0);
+						WriteString_16(24 + BUTTON_W*2, BUTTON_1+5, "系 统",  0);
+						WriteString_16(24 + BUTTON_W*2, BUTTON_2, "设 置",  0);
+						WriteString_16(24 + BUTTON_W*3, BUTTON_1+5, "数 据",  0);
+						WriteString_16(24 + BUTTON_W*3, BUTTON_2, "查 看",  0);
 						WriteString_16(25 + BUTTON_W*4, BUTTON_1+5, "固 件",  0);
 						WriteString_16(25 + BUTTON_W*4, BUTTON_2, "升 级",  0);
+				}else if(GetSystemStatus() == SYS_STATUS_SYS || GetSystemStatus() == SYS_STATUS_SYSSET){
+						WriteString_16(24 + BUTTON_W*2, BUTTON_1+5, "系 统",  0);
+						WriteString_16(24 + BUTTON_W*2, BUTTON_2, "设 置",  0);
+						WriteString_16(24 + BUTTON_W*3, BUTTON_1+5, "系 统",  0);
+						WriteString_16(24 + BUTTON_W*3, BUTTON_2, "信 息",  0);
 				}
 			}
 		}
@@ -1947,8 +1974,8 @@ void Disp_Button_value1( uint32_t value )
 				WriteString_16(24 + BUTTON_W*2, BUTTON_2, "一 页",  0);
 				WriteString_16(24 + BUTTON_W*3, BUTTON_1+5, " 下",  0);
 				WriteString_16(24 + BUTTON_W*3, BUTTON_2, "一 页",  0);
-				WriteString_16(24 + BUTTON_W*4, BUTTON_1+5, "搜 索",  0);
-				WriteString_16(24 + BUTTON_W*4, BUTTON_2, "数 据",  0);
+				WriteString_16(24 + BUTTON_W*4, BUTTON_1+5, "返 回",  0);
+				WriteString_16(24 + BUTTON_W*4, BUTTON_2, "目 录",  0);
 
 			}
 		}
@@ -3705,6 +3732,7 @@ void Disp_Range(u8 hand,u8 range)
         hand=1;
     if(range>6)
         range=6;
+	Colour.Fword = White;
     Colour.black = LCD_COLOR_TEST_BACK;
     LCD_DispString_MS24x23( LCD_WITH-200, 400-32, Range_Disp_Test[hand][range]);
 
