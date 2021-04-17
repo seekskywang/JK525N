@@ -361,7 +361,7 @@ const uint8_t BiasButton_Tip[][7+1]=  //频率选择时候的下面的提示符号
 const uint8_t Sys_Sys[][20+1]=
 {
 	{"仪器型号:  JK625  "},
-	{"软件版本:  Ver:1.9"},
+	{"软件版本:  Ver:2.1"},
 	{"硬件版本:  Ver:1.0"},
 	{"仪器编号:"},
 
@@ -370,10 +370,12 @@ const uint8_t Sys_Sys[][20+1]=
 //1.4修改设置数据存到内部flash
 //1.5修改手动触发只存一次数据
 //1.9增加数据保持和sd卡存储数据查看功能
+//2.0优化掉数据，增加显示小数点位数选择
+//2.1优化掉设置数据
 const uint8_t Sys_Sys_E[][20+1]=
 {
 	{"INST MODEL:  JK625 "},
-	{"SOFT VER:   Ver:1.9"},
+	{"SOFT VER:   Ver:2.1"},
 	{"HARD VER:   Ver:1.0"},
 	{"SERIALNO:"},	
 
@@ -625,6 +627,8 @@ void Parameter_valuecomp(void)
         Jk516save.Sys_Setvalue.uart=0;
     if(Jk516save.Sys_Setvalue.u_flag>1)
         Jk516save.Sys_Setvalue.u_flag=0;
+	if(Jk516save.dispdot>1)
+        Jk516save.dispdot=0;
     for(i=0;i<20;i++)
     {
         if(Jk516save.Sys_Setvalue.textname[i]>128)
@@ -1632,6 +1636,7 @@ void Uart_Process(void)
 }
 
 const u8 send_dot[]={3,3,2,4,2,4,3,2,4,3,2};
+const u8 send_dot1[]={3,2,1,3,2,4,3,2,4,3,2};
 const u8 Send_uint[]={0,0,0,1,1,2,2,2,3,6,6};
 Test_ValueTypedef Datacov(s32 value,u8 range)
 {
@@ -1639,7 +1644,13 @@ Test_ValueTypedef Datacov(s32 value,u8 range)
     
     midvalue.polar=polarity_r;
     midvalue.res=value;
-    midvalue.dot=send_dot[range];
+	if(Jk516save.dispdot == 0)
+	{
+		midvalue.dot=send_dot[range];
+	}else if(Jk516save.dispdot == 1){
+		midvalue.dot=send_dot1[range];
+	}
+		
     midvalue.uint=Send_uint[range];
     return midvalue;
 
@@ -1652,7 +1663,7 @@ Test_ValueTypedef V_Datacov(s32 value ,u8 range)
     
     midvalue.polar=polarity_v;
         
-    midvalue.res=value;
+    midvalue.res=value;	
     if(range)
         midvalue.dot=3;
     else
@@ -1791,8 +1802,14 @@ void Disp_Testvalue(Test_ValueTypedef value,Test_ValueTypedef value_v,u8 speed)
         DispBuf[i]='-';
         
     }
-    else
-    Hex_Format(Res_disp , value.dot , 5, FALSE);  
+    else{
+//		if(Jk516save.dispdot == 0)
+//		{
+//			Hex_Format(Res_disp , value.dot , 4, FALSE);
+//		}else if(Jk516save.dispdot == 1){
+			Hex_Format(Res_disp , value.dot , 5, FALSE);
+//		}
+	}
     memcpy((void *)Send_ComBuff.send_res,DispBuf,5);
     memcpy((void *)Send_To_U.Send_res,DispBuf,6);//电阻
     memcpy((void *)&Send_To_U.Send_res[6],DISP_UINT[Test_Value.uint],3);//单位
@@ -4537,7 +4554,7 @@ u8 read_adV_1(void)
 				else
 					polarity_v = 1;
 
-    }
+    }	
 		bubble_sort_better(scan_V,300);
 		disp_V = 0;
 		for( i = 1; i < 300; i++)

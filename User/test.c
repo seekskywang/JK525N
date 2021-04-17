@@ -129,7 +129,7 @@ u16 hispage;
 u16 hispagestart;
 u16 hispageend;
 u16 hiscursor;
-
+u16 sizewatch;
 #ifdef USB_OTG_HS_INTERNAL_DMA_ENABLED
   #if defined ( __ICCARM__ ) /*!< IAR Compiler */
     #pragma data_alignment=4   
@@ -519,29 +519,29 @@ u8 SET_ERASE(void)
     return state;
 }
 
-void Store_cal_flash(void)
-{
-	while(CAL_ERASE() != FLASH_COMPLETE);
-	FlashWrite((u32*)&Jk516cal,ADDR_CAL_SECTOR,sizeof(Jk516cal));
-}
+//void Store_cal_flash(void)
+//{
+//	while(CAL_ERASE() != FLASH_COMPLETE);
+//	FlashWrite((u32*)&Jk516cal,ADDR_CAL_SECTOR,sizeof(Jk516cal));
+//}
 
 
-void Read_cal_flash(void)
-{
-	Flash_Read32BitDatas(ADDR_CAL_SECTOR,sizeof(Jk516cal),(u32*)&Jk516cal);
-}
+//void Read_cal_flash(void)
+//{
+//	Flash_Read32BitDatas(ADDR_CAL_SECTOR,sizeof(Jk516cal),(u32*)&Jk516cal);
+//}
 
-void Store_set_flash(void)
-{
-	while(SET_ERASE() != FLASH_COMPLETE);
-//	SET_ERASE();
-	FlashWrite((u32*)&Jk516save,ADDR_SET_SECTOR,sizeof(Jk516save));
-}
+//void Store_set_flash(void)
+//{
+//	while(SET_ERASE() != FLASH_COMPLETE);
+////	SET_ERASE();
+//	FlashWrite((u32*)&Jk516save,ADDR_SET_SECTOR,sizeof(Jk516save));
+//}
 
-void Read_set_flash(void)
-{
-	Flash_Read32BitDatas(ADDR_SET_SECTOR,sizeof(Jk516save),(u32*)&Jk516save);
-}
+//void Read_set_flash(void)
+//{
+//	Flash_Read32BitDatas(ADDR_SET_SECTOR,sizeof(Jk516save),(u32*)&Jk516save);
+//}
 
 void Power_Process(void)
 {
@@ -606,7 +606,7 @@ void Power_Process(void)
 	
 	
 	
-	Parameter_valuecomp();//比较读出的数据
+	
     open_flag=0;
     Range=Jk516save.Set_Data.Range;
     Range_Control(Range);
@@ -619,7 +619,13 @@ void Power_Process(void)
 	}
 //		Touch_GPIO_Config();
 //		tp_dev.init();				//触摸屏初始化
-	
+	SPI_FLASH_Init();
+//	Read_set_flash();
+//	delay_ms(500);
+//	Read_cal_flash();
+//	Parameter_valuecomp();//比较读出的数据
+//	sizewatch = sizeof(Jk516save);
+//	Jk516save.dispdot=1;
 		while( GetSystemStatus() == SYS_STATUS_POWER )
 		{
 				i++;
@@ -1744,7 +1750,7 @@ void Test_Process(void)
     u8 test_over = 0;
     u8 OpenRangflag = 0;
     vu8 Trip_Over_usb = 0;
-		vu16 i;
+	vu16 i;
     u8 ry_flag=0;
     Send_To_UTypedef pt;
     Disp_Coordinates_Typedef  Coordinates;
@@ -1770,7 +1776,10 @@ void Test_Process(void)
     i=0;
     range_over=0;
 	V_Range=1;
-	
+	Read_set_flash();
+	delay_ms(500);
+	Read_cal_flash();
+	Parameter_valuecomp();//比较读出的数据
 		while(GetSystemStatus()==SYS_STATUS_TEST)
 		{
 			
@@ -2136,11 +2145,11 @@ void Test_Process(void)
                if(disp_I<0)
                {
                    disp_I=-disp_I;
-                   polarity_r=0;
+//                   polarity_r=0;
                }
                else
                {
-                polarity_r=1;
+//                polarity_r=1;
                
                }
                 
@@ -2153,7 +2162,7 @@ void Test_Process(void)
          
                    
                }
-                if(polarity_v == 0 && disp_V <= abs(Jk516save.Clear_V[V_Range])+10)
+                if(polarity_v == 0 && disp_V <= abs(Jk516save.Clear_V[V_Range])+100)
 				{
 					polarity_v = 1;
 					disp_V=abs(Jk516save.Clear_V[V_Range]) - disp_V;
@@ -2206,7 +2215,12 @@ void Test_Process(void)
 							{
 								Test_Value=Datacov(disp_I,Range);
 							}else{
-								Test_Value=Datacov(disp_I*10,Range);
+								if(Jk516save.dispdot == 0)
+								{
+									Test_Value=Datacov(disp_I*10,Range);
+								}else if(Jk516save.dispdot == 1){
+									Test_Value=Datacov(disp_I,Range);
+								}
 							}
 							Disp_Testvalue(Test_Value,Test_Value_V,0);//显示电阻和电压
 							if(Jk516save.Set_Data.V_comp)
@@ -2686,17 +2700,15 @@ void Test_Process(void)
 						keynum=0;
                     break;
                     case Key_LEFT:
-                        if(keynum<1)
-                            keynum=6;
-                        else
-                            keynum--;
+                        if(keynum>3)
+                            keynum-=3;
+
                       
                     break;
                     case Key_RIGHT:
-                        if(keynum>5)
-                            keynum=0;
-                        else
-                            keynum++;
+                        if(keynum<4)
+                            keynum+=3;
+
                        
                  
                             
@@ -3009,6 +3021,9 @@ void Use_DebugProcess(void)
  //   uint32_t  scan_I[200],scan_V[200];
     test_start=0;
     LCD_Clear(LCD_COLOR_TEST_BACK);
+	Read_set_flash();
+	delay_ms(500);
+	Read_cal_flash();
 	Disp_UserCheck_Item();
 //    Debug_stanedcomp();//校正值比较
     EXTI_ClearITPendingBit(KEY1_INT_EXTI_LINE); 
@@ -3141,6 +3156,13 @@ void Use_DebugProcess(void)
                     //SetSystemStatus(SYS_STATUS_TEST);
 				break;
 				case Key_SETUP:
+					if(Jk516save.dispdot == 0)
+					{
+						Jk516save.dispdot = 1;
+					}else if(Jk516save.dispdot == 1){
+						Jk516save.dispdot = 0;
+					}
+					Store_set_flash();
 //                        test_start=0;
 //                    if(list==0)
 //                    {
@@ -4133,7 +4155,16 @@ static uint8_t MODS_ReadRegValue(uint16_t reg_addr, uint8_t *reg_value)
 		}break;
 		
 	}
-	sendvvalue = Test_Value_V.res*10;
+	if(Jk516save.dispdot == 1)
+	{
+		sendrvalue*=10;
+	}
+	if(V_Range==0)
+	{
+		sendvvalue = Test_Value_V.res;
+	}else{
+		sendvvalue = Test_Value_V.res*10;
+	}
 	if(open_flag == 1)
 	{
 		sendrvalue = 0xffffffff;	

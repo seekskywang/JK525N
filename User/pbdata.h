@@ -327,6 +327,9 @@ u8 GetSoftTimerOut(u8 id);
 //SD卡相关
 #define SD_MAX_BLOCK				200000
 
+//显示位数
+#define DATA_DOT				0
+
 //定义变量
 extern uint8_t softswitch;
 extern u8 dt;
@@ -613,7 +616,7 @@ typedef struct
      float Clear_V[2];
     vu8 fac_num[10];
 	Touch_save_Typedef Touch_save;
-    
+    vu8 dispdot;
     
     
 

@@ -63,7 +63,7 @@ u8 RangeChange_Flag;
 u8 Int_Pe3flag;
 u32 last_R_disp,last_V_disp;
 
- u8 cpld_buff[2];
+u8 cpld_buff[2];
 const u8 fit_allnum[4]={128,64,16,16};
 //==========================================================
 //参数项(5项)
