@@ -1776,8 +1776,9 @@ void Test_Process(void)
     i=0;
     range_over=0;
 	V_Range=1;
+	delay_ms(1000);
 	Read_set_flash();
-	delay_ms(500);
+	delay_ms(1000);
 	Read_cal_flash();
 	Parameter_valuecomp();//比较读出的数据
 		while(GetSystemStatus()==SYS_STATUS_TEST)
