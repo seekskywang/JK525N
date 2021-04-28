@@ -546,7 +546,7 @@ u8 SET_ERASE(void)
 void Power_Process(void)
 {
 		u16 i;
-    u8 j;
+    u8 j,k;
     Disp_Coordinates_Typedef Debug_Cood;
 		u8 key;
     Int_Pe3flag = 0;
@@ -626,6 +626,13 @@ void Power_Process(void)
 //	Parameter_valuecomp();//比较读出的数据
 //	sizewatch = sizeof(Jk516save);
 //	Jk516save.dispdot=1;
+//	delay_ms(1000);
+	for(k = 0;k<3;k++)
+	{
+		Read_set_flash();
+		delay_ms(1000);
+		Read_cal_flash();
+	}
 		while( GetSystemStatus() == SYS_STATUS_POWER )
 		{
 				i++;
@@ -1776,10 +1783,7 @@ void Test_Process(void)
     i=0;
     range_over=0;
 	V_Range=1;
-	delay_ms(1000);
-	Read_set_flash();
-	delay_ms(1000);
-	Read_cal_flash();
+	
 	Parameter_valuecomp();//比较读出的数据
 		while(GetSystemStatus()==SYS_STATUS_TEST)
 		{
